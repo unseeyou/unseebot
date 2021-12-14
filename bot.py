@@ -2,11 +2,12 @@ import asyncio
 import discord
 import youtube_dl
 from discord.ext import commands
-
+from discord_together import DiscordTogether
 client = commands.Bot(command_prefix = '>', help_command=None)
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
+players = {}
 _ = False
 
 ytdl_format_options = {
@@ -46,17 +47,23 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return filename
 
 @client.command()
+async def yt(ctx):
+    link = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'youtube')
+    await ctx.send(f"Click the blue link to join the event!\n{link}")
+
+@client.command()
 async def help(ctx):
     embed = discord.Embed(title="Help", description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
     embed.add_field(name='COMMAND 1: help', value='this is the help command you just used.', inline=False)
-    embed.add_field(name='COMMAND 2: join', value='this makes the bot join your current voice channel', inline=False)
-    embed.add_field(name='COMMAND 3: leave', value='this makes the bot leave your current voice channel', inline=False)
-    embed.add_field(name='COMMAND 4: play', value='this plays a single video, from a youtube URL', inline=False)
+    embed.add_field(name='COMMAND 2: join', value='this makes the bot join your current voice channel.', inline=False)
+    embed.add_field(name='COMMAND 3: leave', value='this makes the bot leave your current voice channel.', inline=False)
+    embed.add_field(name='COMMAND 4: play', value='this plays a single video, from a youtube URL.', inline=False)
     embed.add_field(name='COMMAND 5: pause', value='this pauses what the bot is currently playing.', inline=False)
     embed.add_field(name='COMMAND 6: resume', value='this resumes what you just paused.', inline=False)
     embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
-    embed.add_field(name='COMMAND 8: spam', value='I think this is pretty self explanatory. A word of warning: it uses @everyone', inline=False)
-
+    embed.add_field(name='COMMAND 8: spam', value='I think this is pretty self explanatory. A word of warning: it uses @everyone.', inline=False)
+    embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot.', inline=False)
+    embed.add_field(name='COMMAND 10: yt', value='this creates a youtube together event i nyour current voice channel.')
     await ctx.send(embed=embed)
 
 @client.command()
@@ -102,15 +109,10 @@ async def leave(ctx):
 async def play(ctx,url):
     server = ctx.message.guild
     voice_channel = server.voice_client
-    if discord.VoiceChannel == None:
-        await ctx.send("The bot is not connected to a voice channel.")
-    else:
-        async with ctx.typing():
-            filename = await YTDLSource.from_url(url)
-            voice_channel.play(discord.FFmpegPCMAudio(executable="ffmpeg.exe", source=filename))
-        await ctx.send('**Now playing:** {}'.format(filename))
-
-
+    async with ctx.typing():
+        filename = await YTDLSource.from_url(url)
+        voice_channel.play(discord.FFmpegPCMAudio(executable="ffmpeg.exe", source=filename))
+    await ctx.send('**Now playing:** {}'.format(filename))
 
 @client.command(name='pause', help='This command pauses the song')
 async def pause(ctx):
