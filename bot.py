@@ -50,12 +50,14 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
 @client.event
 async def on_ready():
-    client.togetherControl = await DiscordTogether(TOKEN)
+    client.togetherControl = await DiscordTogether('OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.BrO_s8lIjXwJCOkU1cTk-QbakRs')
+    print("If you are seeing this then unseeyou's epic bot is working!")
+    await client.change_presence(activity=discord.Game('With your mind - my prefix is >'))
 
 @client.command()
 async def yt(ctx):
     link = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'youtube')
-    await ctx.send(f"Click the blue link to join the event!\n{link}")
+    await ctx.send(f"Click on the blue link to start te event!\n{link}")
 
 @client.command()
 async def help(ctx):
@@ -146,9 +148,4 @@ async def stop(ctx):
     else:
         await ctx.send("The bot is not playing anything at the moment.")
 
-@client.event 
-async def on_ready():
-    print("If you are seeing this then unseeyou's epic bot is working!")
-    await client.change_presence(activity=discord.Game('With your mind - my prefix is >'))
-
-client.run(TOKEN)
+client.run('OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.BrO_s8lIjXwJCOkU1cTk-QbakRs')
