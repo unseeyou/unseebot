@@ -10,6 +10,8 @@ youtube_dl.utils.bug_reports_message = lambda: ''
 players = {}
 _ = False
 
+TOKEN = 'OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.nchRVZMTfX0oDgV64wJbDGyXv4Q'
+
 ytdl_format_options = {
     'format': 'bestaudio/best',
     'restrictfilenames': True,
@@ -45,6 +47,10 @@ class YTDLSource(discord.PCMVolumeTransformer):
             data = data['entries'][0]
         filename = data['title'] if stream else ytdl.prepare_filename(data)
         return filename
+
+@client.event
+async def on_ready():
+    client.togetherControl = await DiscordTogether(TOKEN)
 
 @client.command()
 async def yt(ctx):
@@ -145,4 +151,4 @@ async def on_ready():
     print("If you are seeing this then unseeyou's epic bot is working!")
     await client.change_presence(activity=discord.Game('With your mind - my prefix is >'))
 
-client.run('OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.nchRVZMTfX0oDgV64wJbDGyXv4Q')
+client.run(TOKEN)
