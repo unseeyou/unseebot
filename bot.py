@@ -57,7 +57,7 @@ async def on_ready():
 @client.command()
 async def yt(ctx):
     link = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'youtube')
-    await ctx.send(f"Click on the blue link to start te event!\n{link}")
+    await ctx.send(f"Click on the blue link to start the event!\n{link}")
 
 @client.command()
 async def help(ctx):
