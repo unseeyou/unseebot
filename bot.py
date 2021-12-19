@@ -1,8 +1,8 @@
 import asyncio
 import discord
-import requests
 import youtube_dl
 from dcactivity import DCActivity
+from discord import message
 from discord.ext import commands
 from discord_together import DiscordTogether
 
@@ -125,10 +125,11 @@ async def help(ctx):
     embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot.', inline=False)
     embed.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
     embed.add_field(name='COMMAND 11: betrayal', value='this starts a betrayal.io activity in your voice channel.', inline=False)
-    embed.add_field(name='COMMAND 12: fish', value='this generates a fishington.io activity in your voice channel', inline=False)
-    embed.add_field(name='COMMAND 12: doodle', value='this generates a doodle crew activity in your voice channel',inline=False)
-    embed.add_field(name='COMMAND 12: word', value='this generates an awkword activity in your voice channel',inline=False)
-    embed.add_field(name='COMMAND 13: bwstats', value='this gives a link to the bedwars stats website', inline=False)
+    embed.add_field(name='COMMAND 12: fish', value='this generates a fishington.io activity in your voice channel.', inline=False)
+    embed.add_field(name='COMMAND 12: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
+    embed.add_field(name='COMMAND 12: word', value='this generates an awkword activity in your voice channel.',inline=False)
+    embed.add_field(name='COMMAND 13: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
+    embed.add_field(name='COMMAND 14: impersonate', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
 
     await ctx.send(embed=embed)
 
@@ -211,5 +212,21 @@ async def stop(ctx):
         await voice_client.stop()
     else:
         await ctx.send("The bot is not playing anything at the moment.")
+
+@client.command()
+async def impersonate(ctx, member: discord.Member, *, message=None):
+    await ctx.message.delete()
+
+    if message == None:
+            await ctx.send(f'You gotta pick someone to impersonate first')
+            return
+
+    webhook = await ctx.channel.create_webhook(name=member.name)
+    await webhook.send(
+            str(message), username=member.nick, avatar_url=member.avatar_url)
+
+    webhooks = await ctx.channel.webhooks()
+    for webhook in webhooks:
+            await webhook.delete()
 
 client.run('OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.BrO_s8lIjXwJCOkU1cTk-QbakRs')
