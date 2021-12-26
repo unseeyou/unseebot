@@ -2,7 +2,6 @@ import asyncio
 import discord
 import youtube_dl
 from dcactivity import DCActivity
-from discord import message
 from discord.ext import commands
 from discord_together import DiscordTogether
 
@@ -84,7 +83,12 @@ async def on_ready():
 @client.event
 async def on_command_error(error, ctx):
     if isinstance(error, commands.CommandNotFound):
-        await client.send_message(ctx.message.channel, "Sorry, this command does not exist. Contact unseeyou#2912 if you think this should be added.")
+        await ctx.send("Sorry, this command does not exist. Contact unseeyou#2912 if you think this should be added.")
+
+@client.command(pass_context=True)
+async def unseebot(ctx):
+    await ctx.send('Check your dms!')
+    await ctx.message.author.send("Hi! I'm unseebot, a bot made by unseeyou. Please feel free to report any issues to unseeyou via dms. Thanks!")
 
 @client.command()
 async def yt(ctx):
@@ -112,28 +116,6 @@ async def fish(ctx):
     await ctx.send(f'click on this link to start the game!\n{invite}')
 
 @client.command()
-async def help(ctx):
-    embed = discord.Embed(title="Help", description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
-    embed.add_field(name='COMMAND 1: help', value='this is the help command you just used.', inline=False)
-    embed.add_field(name='COMMAND 2: join', value='this makes the bot join your current voice channel.', inline=False)
-    embed.add_field(name='COMMAND 3: leave', value='this makes the bot leave your current voice channel.', inline=False)
-    embed.add_field(name='COMMAND 4: play', value='this plays a single video, from a youtube URL. - **NOT WORKING**', inline=False)
-    embed.add_field(name='COMMAND 5: pause', value='this pauses what the bot is currently playing. - **NOT WORKING**', inline=False)
-    embed.add_field(name='COMMAND 6: resume', value='this resumes what you just paused. - **NOT WORKING**', inline=False)
-    embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
-    embed.add_field(name='COMMAND 8: spam', value='I think this is pretty self explanatory. A word of warning: it uses @everyone.- **OFFICIALLY REMOVED**', inline=False)
-    embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot.', inline=False)
-    embed.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
-    embed.add_field(name='COMMAND 11: betrayal', value='this starts a betrayal.io activity in your voice channel.', inline=False)
-    embed.add_field(name='COMMAND 12: fish', value='this generates a fishington.io activity in your voice channel.', inline=False)
-    embed.add_field(name='COMMAND 12: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
-    embed.add_field(name='COMMAND 12: word', value='this generates an awkword activity in your voice channel.',inline=False)
-    embed.add_field(name='COMMAND 13: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
-    embed.add_field(name='COMMAND 14: impersonate', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
-
-    await ctx.send(embed=embed)
-
-@client.command()
 async def bwstats(ctx):
     embed = discord.Embed(title='Hypixel Bedwars Statistics', url='https://bwstats.shivam.pro',description='click the link to view stats', colour=discord.Colour.dark_gold())
 
@@ -143,20 +125,29 @@ async def bwstats(ctx):
 async def hello(ctx):
     await ctx.send('Hello!')
 
-#@client.command()
-#async def spam(ctx):
-   # await ctx.send('@everyone hi')
-   # await ctx.send('@everyone hi')
-    #await ctx.send('@everyone hi')
-   # await ctx.send('@everyone hi')
-   # await ctx.send('@everyone hi')
-  #  await ctx.send('@everyone hi')
-  #  await ctx.send('@everyone hi')
-   # await ctx.send('@everyone hi')
-  #  await ctx.send('@everyone hi')
-    #await ctx.send('@everyone hi')
-    #await ctx.send('@everyone hi')
-  #  await ctx.send('@everyone hi')
+@client.command()
+async def spam(ctx):
+    await ctx.send('no')
+    await ctx.message.author.send("naughty naughty you shouldn't spam people or the server.")
+    await ctx.message.author.send('this is what you get')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
+    await ctx.message.author.send('spam')
 
 @client.command()
 async def join(ctx):
@@ -167,7 +158,6 @@ async def join(ctx):
         channel = ctx.message.author.voice.channel
         _ = True
     await channel.connect()
-
 
 @client.command()
 async def leave(ctx):
@@ -195,7 +185,6 @@ async def pause(ctx):
     else:
         await ctx.send("The bot is not playing anything at the moment.")
 
-
 @client.command(name='resume', help='Resumes the song')
 async def resume(ctx):
     voice_client = ctx.message.guild.voice_client
@@ -204,8 +193,7 @@ async def resume(ctx):
     else:
         await ctx.send("The bot was not playing anything before this. Use play_song command")
 
-
-@client.command(name='stop', help='Stops the song')
+@client.command()
 async def stop(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
@@ -214,7 +202,7 @@ async def stop(ctx):
         await ctx.send("The bot is not playing anything at the moment.")
 
 @client.command()
-async def impersonate(ctx, member: discord.Member, *, message=None):
+async def sudo(ctx, member: discord.Member, *, message=None):
     await ctx.message.delete()
 
     if message == None:
@@ -228,5 +216,36 @@ async def impersonate(ctx, member: discord.Member, *, message=None):
     webhooks = await ctx.channel.webhooks()
     for webhook in webhooks:
             await webhook.delete()
+
+@client.command()
+async def help(ctx):
+    embed = discord.Embed(title="Help", description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
+    embed.add_field(name='COMMAND 1: help', value='this is the help command you just used.', inline=False)
+    embed.add_field(name='COMMAND 2: join', value='this makes the bot join your current voice channel.', inline=False)
+    embed.add_field(name='COMMAND 3: leave', value='this makes the bot leave your current voice channel.', inline=False)
+    embed.add_field(name='COMMAND 4: play', value='this plays a single video, from a youtube URL. - **NOT WORKING**', inline=False)
+    embed.add_field(name='COMMAND 5: pause', value='this pauses what the bot is currently playing. - **NOT WORKING**', inline=False)
+    embed.add_field(name='COMMAND 6: resume', value='this resumes what you just paused. - **NOT WORKING**', inline=False)
+    embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
+    embed.add_field(name='COMMAND 8: invite', value='generates a link for you to invite unseebot to your server', inline=False)
+    embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot.', inline=False)
+    embed.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
+    embed.add_field(name='COMMAND 11: betrayal', value='this starts a betrayal.io activity in your voice channel.', inline=False)
+    embed.add_field(name='COMMAND 12: fish', value='this generates a fishington.io activity in your voice channel.', inline=False)
+    embed.add_field(name='COMMAND 12: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
+    embed.add_field(name='COMMAND 12: word', value='this generates an awkword activity in your voice channel.',inline=False)
+    embed.add_field(name='COMMAND 13: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
+    embed.add_field(name='COMMAND 14: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
+    embed.add_field(name='COMMAND 15: unseeyou', value='essentially an about me sent in your dms', inline=False)
+    embed.set_footer(text='unseebot by unseeyou')
+
+    msg = await ctx.send(embed=embed)
+    await msg.add_reaction('◀️')
+    await msg.add_reaction('▶️')
+
+@client.command()
+async def invite(ctx):
+    embed = discord.Embed(title='click here', description='to invite unseebot to your server', url='https://discord.com/api/oauth2/authorize?client_id=915182238239449099&permissions=8&scope=bot')
+    await ctx.send(embed=embed)
 
 client.run('OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.BrO_s8lIjXwJCOkU1cTk-QbakRs')
