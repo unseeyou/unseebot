@@ -116,11 +116,14 @@ async def fish(ctx):
     await ctx.send(f'click on this link to start the game!\n{invite}')
 
 @client.command()
-async def bwstats(ctx):
-    embed = discord.Embed(title='Hypixel Bedwars Statistics', url='https://bwstats.shivam.pro',description='click the link to view stats', colour=discord.Colour.dark_gold())
+async def bwstats(ctx, message=None):
+    embed1 = discord.Embed(title='Hypixel Bedwars Statistics', url='https://bwstats.shivam.pro',description='click the link to view stats', colour=discord.Colour.dark_gold())
+    embed2 = discord.Embed(title='Hypixel Bedwars Statistics', url=f'https://bwstats.shivam.pro/user/{message}',description=f'click the link to view the stats of {message}', colour=discord.Colour.dark_gold())
 
-    await ctx.send(embed=embed)
-
+    if message == None:
+        await ctx.send(embed=embed1)
+    else:
+        await ctx.send(embed=embed2)
 @client.command()
 async def hello(ctx):
     await ctx.send('Hello!')
@@ -219,7 +222,7 @@ async def sudo(ctx, member: discord.Member, *, message=None):
 
 @client.command()
 async def help(ctx):
-    embed = discord.Embed(title="Help", description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
+    embed = discord.Embed(title="Help", description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed.add_field(name='COMMAND 1: help', value='this is the help command you just used.', inline=False)
     embed.add_field(name='COMMAND 2: join', value='this makes the bot join your current voice channel.', inline=False)
     embed.add_field(name='COMMAND 3: leave', value='this makes the bot leave your current voice channel.', inline=False)
@@ -236,7 +239,7 @@ async def help(ctx):
     embed.add_field(name='COMMAND 12: word', value='this generates an awkword activity in your voice channel.',inline=False)
     embed.add_field(name='COMMAND 13: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
     embed.add_field(name='COMMAND 14: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
-    embed.add_field(name='COMMAND 15: unseeyou', value='essentially an about me sent in your dms', inline=False)
+    embed.add_field(name='COMMAND 15: unseebot', value='essentially an about me sent in your dms', inline=False)
     embed.set_footer(text='unseebot by unseeyou')
 
     msg = await ctx.send(embed=embed)
