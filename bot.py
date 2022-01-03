@@ -1,4 +1,6 @@
 import asyncio
+import os
+from dotenv import load_dotenv
 import discord
 import youtube_dl
 from dcactivity import DCActivity
@@ -12,26 +14,8 @@ dcactivity = DCActivity(client)
 players = {}
 _ = False
 
-TOKEN = 'OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.BrO_s8lIjXwJCOkU1cTk-QbakRs'
-
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'restrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0' # bind to ipv4 since ipv6 addresses cause issues sometimes
-}
-
-ffmpeg_options = {
-    'options': '-vn'
-}
-
-ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+load_dotenv()
+TOKEN = os.getenv("UNSEEBOT_TOKEN")
 
 ytdl_format_options = {
     'format': 'bestaudio/best',
@@ -76,7 +60,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
 @client.event
 async def on_ready():
-    client.togetherControl = await DiscordTogether('OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.BrO_s8lIjXwJCOkU1cTk-QbakRs')
+    client.togetherControl = await DiscordTogether(TOKEN)
     print("If you are seeing this then unseeyou's epic bot is working!")
     await client.change_presence(activity=discord.Game('With your mind - >help'))
 
@@ -235,20 +219,18 @@ async def help(ctx):
     embed.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
     embed.add_field(name='COMMAND 11: betrayal', value='this starts a betrayal.io activity in your voice channel.', inline=False)
     embed.add_field(name='COMMAND 12: fish', value='this generates a fishington.io activity in your voice channel.', inline=False)
-    embed.add_field(name='COMMAND 12: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
-    embed.add_field(name='COMMAND 12: word', value='this generates an awkword activity in your voice channel.',inline=False)
-    embed.add_field(name='COMMAND 13: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
-    embed.add_field(name='COMMAND 14: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
-    embed.add_field(name='COMMAND 15: unseebot', value='essentially an about me sent in your dms', inline=False)
+    embed.add_field(name='COMMAND 13: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
+    embed.add_field(name='COMMAND 14: word', value='this generates an awkword activity in your voice channel.',inline=False)
+    embed.add_field(name='COMMAND 15: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
+    embed.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
+    embed.add_field(name='COMMAND 17: unseebot', value='essentially an about me sent in your dms', inline=False)
     embed.set_footer(text='unseebot by unseeyou')
 
-    msg = await ctx.send(embed=embed)
-    await msg.add_reaction('◀️')
-    await msg.add_reaction('▶️')
+    await ctx.send(embed=embed)
 
 @client.command()
 async def invite(ctx):
     embed = discord.Embed(title='click here', description='to invite unseebot to your server', url='https://discord.com/api/oauth2/authorize?client_id=915182238239449099&permissions=8&scope=bot')
     await ctx.send(embed=embed)
 
-client.run('OTE1MTgyMjM4MjM5NDQ5MDk5.YaX34A.BrO_s8lIjXwJCOkU1cTk-QbakRs')
+client.run(TOKEN)
