@@ -205,7 +205,7 @@ async def sudo(ctx, member: discord.Member, *, message=None):
             await webhook.delete()
 
 @client.command()
-async def help(ctx):
+async def help(ctx, message=None):
     embed = discord.Embed(title="Help", description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed.add_field(name='COMMAND 1: help', value='this is the help command you just used.', inline=False)
     embed.add_field(name='COMMAND 2: join', value='this makes the bot join your current voice channel.', inline=False)
@@ -216,17 +216,25 @@ async def help(ctx):
     embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
     embed.add_field(name='COMMAND 8: invite', value='generates a link for you to invite unseebot to your server', inline=False)
     embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot.', inline=False)
-    embed.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
-    embed.add_field(name='COMMAND 11: betrayal', value='this starts a betrayal.io activity in your voice channel.', inline=False)
-    embed.add_field(name='COMMAND 12: fish', value='this generates a fishington.io activity in your voice channel.', inline=False)
-    embed.add_field(name='COMMAND 13: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
-    embed.add_field(name='COMMAND 14: word', value='this generates an awkword activity in your voice channel.',inline=False)
-    embed.add_field(name='COMMAND 15: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
-    embed.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
-    embed.add_field(name='COMMAND 17: unseebot', value='essentially an about me sent in your dms', inline=False)
-    embed.set_footer(text='unseebot by unseeyou')
+    embed.set_footer(text='page 1 of 2')
 
-    await ctx.send(embed=embed)
+    embed2 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
+    embed2.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
+    embed2.add_field(name='COMMAND 11: betrayal', value='this starts a betrayal.io activity in your voice channel.', inline=False)
+    embed2.add_field(name='COMMAND 12: fish', value='this generates a fishington.io activity in your voice channel.', inline=False)
+    embed2.add_field(name='COMMAND 13: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
+    embed2.add_field(name='COMMAND 14: word', value='this generates an awkword activity in your voice channel.',inline=False)
+    embed2.add_field(name='COMMAND 15: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
+    embed2.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
+    embed2.add_field(name='COMMAND 17: unseebot', value='essentially an about me sent in your dms', inline=False)
+    embed2.set_footer(text='page 2 of 2')
+
+    if message == '1' or None:
+        await ctx.send(embed=embed)
+    elif message == '2':
+        await ctx.send(embed=embed2)
+    else:
+        await ctx.send('this page does not exist. please run >help 1 or 2')
 
 @client.command()
 async def invite(ctx):
