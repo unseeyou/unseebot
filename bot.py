@@ -216,7 +216,7 @@ async def help(ctx, message=None):
     embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
     embed.add_field(name='COMMAND 8: invite', value='generates a link for you to invite unseebot to your server', inline=False)
     embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot.', inline=False)
-    embed.set_footer(text='page 1 of 2')
+    embed.set_footer(text='page 1 of 3')
 
     embed2 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed2.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
@@ -227,12 +227,18 @@ async def help(ctx, message=None):
     embed2.add_field(name='COMMAND 15: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
     embed2.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
     embed2.add_field(name='COMMAND 17: unseebot', value='essentially an about me sent in your dms', inline=False)
-    embed2.set_footer(text='page 2 of 2')
+    embed2.set_footer(text='page 2 of 3')
 
-    if message == '1' or None:
+    embed3 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
+    embed3.add_field(name='COMMAND 18: github', value='gives a link to the unseebot github page', inline=False)
+    embed3.set_footer(text='page 3 of 3')
+
+    if message == None:
         await ctx.send(embed=embed)
     elif message == '2':
         await ctx.send(embed=embed2)
+    elif message == '3':
+        await ctx.send(embed=embed3)
     else:
         await ctx.send('this page does not exist. please run >help 1 or 2')
 
@@ -240,5 +246,11 @@ async def help(ctx, message=None):
 async def invite(ctx):
     embed = discord.Embed(title='click here', description='to invite unseebot to your server', url='https://discord.com/api/oauth2/authorize?client_id=915182238239449099&permissions=8&scope=bot')
     await ctx.send(embed=embed)
+
+@client.command()
+async def github(ctx):
+    git = discord.Embed(title='link', url='https://github.com/unseeyou/unseebot', description="click on the link to open unseebot's github page", colour=discord.Colour.dark_gray())
+    git.set_image(url='https://images-ext-2.discordapp.net/external/pe2rnxtS-petcef7jYVHtm1ncabRKulTvDV70G1F5O8/https/repository-images.githubusercontent.com/435063686/e6f3942e-98dd-407b-9fbc-4ba1dbe89849')
+    await ctx.send(embed=git)
 
 client.run(TOKEN)
