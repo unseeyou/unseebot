@@ -100,19 +100,18 @@ async def spam(ctx):
 
 @client.command()
 async def sudo(ctx, member: discord.Member, *, message=None):
-    await ctx.message.delete()
     if message == None:
             await ctx.send(f'You gotta pick someone to impersonate first')
             return
 
     webhook = await ctx.channel.create_webhook(name=member.name)
     await webhook.send(
-            str(message), username=member.nick, avatar_url=member.avatar_url)
+            str(message), username=member.nick, avatar_url=member.avatar)
 
     webhooks = await ctx.channel.webhooks()
     for webhook in webhooks:
             await webhook.delete()
-
+    await ctx.message.delete()
 @client.command()
 async def help(ctx, message=None):
     embed = discord.Embed(title="Help", description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
@@ -134,7 +133,7 @@ async def help(ctx, message=None):
     embed2.add_field(name='COMMAND 13: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
     embed2.add_field(name='COMMAND 14: word', value='this generates an awkword activity in your voice channel.',inline=False)
     embed2.add_field(name='COMMAND 15: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
-    embed2.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
+    embed2.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS** **CURRENTLY BROKEN**', inline=False)
     embed2.add_field(name='COMMAND 17: unseebot', value='essentially an about me sent in your dms', inline=False)
     embed2.set_footer(text='page 2 of 3')
 
