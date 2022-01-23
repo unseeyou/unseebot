@@ -1,4 +1,5 @@
 import asyncio
+import random
 import os
 from dotenv import load_dotenv
 import discord
@@ -231,6 +232,7 @@ async def help(ctx, message=None):
 
     embed3 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed3.add_field(name='COMMAND 18: github', value='gives a link to the unseebot github page', inline=False)
+    embed3.add_field(name='COMMAND 19: 8ball', value='ask unseebot as yes or no question', inline=False)
     embed3.set_footer(text='page 3 of 3')
 
     if message == None:
@@ -241,6 +243,14 @@ async def help(ctx, message=None):
         await ctx.send(embed=embed3)
     else:
         await ctx.send('this page does not exist. please run >help 1 or 2')
+
+@client.command(aliases=['8ball'])
+async def _8ball(ctx, message=None):
+    if message != None:
+        list = ['my sources say yes', 'hell no', 'ask again later', "idk man you're on your own", 'sure, why not?', 'how about... no?']
+        await ctx.send(random.choice(list))
+    else:
+        await ctx.send('ask me a question')
 
 @client.command()
 async def invite(ctx):
