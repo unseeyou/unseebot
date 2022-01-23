@@ -7,7 +7,7 @@ from dcactivity import DCActivity
 from discord.ext import commands
 from discord_together import DiscordTogether
 
-client = commands.Bot(command_prefix = '>', help_command=None)
+client = commands.Bot(command_prefix = '>', help_command=None, case_insensitive=True)
 dcactivity = DCActivity(client)
 
 load_dotenv()
@@ -33,6 +33,11 @@ async def unseebot(ctx):
 async def yt(ctx):
     link = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'youtube')
     await ctx.send(f"Click on the blue link to start the event!\n{link}")
+
+@client.command(pass_context=True)
+async def id(ctx):
+    id = ctx.message.guild.id
+    await ctx.send(id)
 
 @client.command()
 async def betrayal(ctx):
@@ -96,7 +101,6 @@ async def spam(ctx):
 @client.command()
 async def sudo(ctx, member: discord.Member, *, message=None):
     await ctx.message.delete()
-
     if message == None:
             await ctx.send(f'You gotta pick someone to impersonate first')
             return
