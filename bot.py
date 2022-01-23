@@ -133,13 +133,14 @@ async def help(ctx, message=None):
     embed2.add_field(name='COMMAND 13: doodle', value='this generates a doodle crew activity in your voice channel.',inline=False)
     embed2.add_field(name='COMMAND 14: word', value='this generates an awkword activity in your voice channel.',inline=False)
     embed2.add_field(name='COMMAND 15: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
-    embed2.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS** **CURRENTLY BROKEN**', inline=False)
+    embed2.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
     embed2.add_field(name='COMMAND 17: unseebot', value='essentially an about me sent in your dms', inline=False)
     embed2.set_footer(text='page 2 of 3')
 
     embed3 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed3.add_field(name='COMMAND 18: github', value='gives a link to the unseebot github page', inline=False)
     embed3.add_field(name='COMMAND 19: 8ball', value='ask unseebot as yes or no question', inline=False)
+    embed3.add_field(name='COMMAND 20: nick', value='changes the nickname of the selected user', inline=False)
     embed3.set_footer(text='page 3 of 3')
 
     if message == None:
@@ -170,6 +171,15 @@ async def _8ball(ctx, message=None):
         await ctx.send(random.choice(list))
     else:
         await ctx.send('ask me a question')
+
+@client.command()
+async def nick(ctx, member: discord.Member, nick):
+    await ctx.send('reminder: I can only change nicknames of people when I have the perms and also my role is higher than theirs in the settings.')
+    if nick:
+        await member.edit(nick=nick)
+        await ctx.send(f'{member} is now called {member.nick} in this server')
+    else:
+        await ctx.send('Invalid nickname')
 
 @client.command()
 async def invite(ctx):
