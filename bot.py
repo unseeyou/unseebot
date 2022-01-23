@@ -1,8 +1,8 @@
-import asyncio
 import random
 import os
-from dotenv import load_dotenv
 import discord
+from discord.ui import Button, View
+from dotenv import load_dotenv
 from dcactivity import DCActivity
 from discord.ext import commands
 from discord_together import DiscordTogether
@@ -140,13 +140,25 @@ async def help(ctx, message=None):
     embed3.set_footer(text='page 3 of 3')
 
     if message == None:
-        await ctx.send(embed=embed)
-    elif message == '2':
-        await ctx.send(embed=embed2)
-    elif message == '3':
-        await ctx.send(embed=embed3)
+        button = Button(label='Page 2', style=discord.ButtonStyle.blurple)
+        button2 = Button(label='Page 1', style=discord.ButtonStyle.blurple)
+        button3 = Button(label='Page 3', style=discord.ButtonStyle.blurple)
+        async def button_callback(interaction):
+            await interaction.response.edit_message(embed=embed2)
+        async def buttoncallback(interaction):
+            await interaction.response.edit_message(embed=embed)
+        async def butcal(interaction):
+            await interaction.response.edit_message(embed=embed3)
+        button.callback=button_callback
+        button2.callback=buttoncallback
+        button3.callback=butcal
+        view = View()
+        view.add_item(button2)
+        view.add_item(button)
+        view.add_item(button3)
+        await ctx.send(embed=embed, view=view)
     else:
-        await ctx.send('this page does not exist. please run >help 1 or 2')
+        await ctx.send('this page does not exist. please run >help')
 
 @client.command(aliases=['8ball'])
 async def _8ball(ctx, message=None):
@@ -158,7 +170,7 @@ async def _8ball(ctx, message=None):
 
 @client.command()
 async def invite(ctx):
-    embed = discord.Embed(title='click here', description='to invite unseebot to your server', url='https://discord.com/api/oauth2/authorize?client_id=915182238239449099&permissions=8&scope=bot')
+    embed = discord.Embed(title='click here', description='to invite unseebot to your server', url='https://discord.com/api/oauth2/authorize?client_id=915182238239449099&permissions=8&scope=bot%20applications.commands')
     await ctx.send(embed=embed)
 
 @client.command()
