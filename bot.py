@@ -123,7 +123,7 @@ async def help(ctx, message=None):
     embed.add_field(name='COMMAND 6: resume', value='this resumes what you just paused. - **NOT WORKING**', inline=False)
     embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
     embed.add_field(name='COMMAND 8: invite', value='generates a link for you to invite unseebot to your server', inline=False)
-    embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot.', inline=False)
+    embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot and makes the bot leave.', inline=False)
     embed.set_footer(text='page 1 of 3')
 
     embed2 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
@@ -171,6 +171,8 @@ async def _8ball(ctx, message=None):
         await ctx.send(random.choice(list))
     else:
         await ctx.send('ask me a question')
+
+client.load_extension("cogs.music")
 
 @client.command()
 async def nick(ctx, member: discord.Member, nick):
