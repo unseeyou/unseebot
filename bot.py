@@ -1,6 +1,7 @@
 import random
 import os
 import discord
+import aiohttp
 from discord.ui import Button, View
 from dotenv import load_dotenv
 from dcactivity import DCActivity
@@ -33,6 +34,30 @@ async def unseebot(ctx):
 async def yt(ctx):
     link = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'youtube')
     await ctx.send(f"Click on the blue link to start the event!\n{link}")
+
+@client.command(aliases=['doggo', 'dogs', 'dogfacts', 'dogfact', 'pup', 'pupper', 'puppy'])
+async def dog(ctx):
+    async with aiohttp.ClientSession() as session:
+        request = await session.get('https://some-random-api.ml/img/dog')
+        dogjson = await request.json()
+        request2 = await session.get('https://some-random-api.ml/facts/dog')
+        factjson = await request2.json()
+    dogbed = discord.Embed(title='DOGGY', colour=discord.Colour.dark_gold())
+    dogbed.set_image(url=dogjson['link'])
+    dogbed.set_footer(text=factjson['fact'])
+    await ctx.send(embed=dogbed)
+
+@client.command(aliases=['kitty', 'kitten', 'meow', 'catfact', 'catfacts'])
+async def cat(ctx):
+    async with aiohttp.ClientSession() as session:
+        request1 = await session.get('https://some-random-api.ml/img/cat')
+        catjson = await request1.json()
+        request22 = await session.get('https://some-random-api.ml/facts/cat')
+        factjson1 = await request22.json()
+    catty = discord.Embed(title='KITTY', colour=discord.Colour.dark_gold())
+    catty.set_image(url=catjson['link'])
+    catty.set_footer(text=factjson1['fact'])
+    await ctx.send(embed=catty)
 
 @client.command(pass_context=True)
 async def id(ctx):
@@ -118,9 +143,9 @@ async def help(ctx, message=None):
     embed.add_field(name='COMMAND 1: help', value='this is the help command you just used.', inline=False)
     embed.add_field(name='COMMAND 2: join', value='this makes the bot join your current voice channel.', inline=False)
     embed.add_field(name='COMMAND 3: leave', value='this makes the bot leave your current voice channel.', inline=False)
-    embed.add_field(name='COMMAND 4: play', value='this plays a single video, from a youtube URL. - **NOT WORKING**', inline=False)
-    embed.add_field(name='COMMAND 5: pause', value='this pauses what the bot is currently playing. - **NOT WORKING**', inline=False)
-    embed.add_field(name='COMMAND 6: resume', value='this resumes what you just paused. - **NOT WORKING**', inline=False)
+    embed.add_field(name='COMMAND 4: play', value='this plays a single video, from a youtube URL.', inline=False)
+    embed.add_field(name='COMMAND 5: pause', value='this pauses what the bot is currently playing.', inline=False)
+    embed.add_field(name='COMMAND 6: resume', value='this resumes what you just paused.', inline=False)
     embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
     embed.add_field(name='COMMAND 8: invite', value='generates a link for you to invite unseebot to your server', inline=False)
     embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot and makes the bot leave.', inline=False)
@@ -141,6 +166,8 @@ async def help(ctx, message=None):
     embed3.add_field(name='COMMAND 18: github', value='gives a link to the unseebot github page', inline=False)
     embed3.add_field(name='COMMAND 19: 8ball', value='ask unseebot as yes or no question', inline=False)
     embed3.add_field(name='COMMAND 20: nick', value='changes the nickname of the selected user', inline=False)
+    embed3.add_field(name='COMMAND 21: cat', value='shows a picture of cure kitty and tells you about pussies', inline=False)
+    embed3.add_field(name='COMMAND 22: dog', value='shows a doggo and gives doggo facts', inline=False)
     embed3.set_footer(text='page 3 of 3')
 
     if message == None:
