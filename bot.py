@@ -150,8 +150,8 @@ async def help(ctx, message=None):
     embed.add_field(name='COMMAND 6: resume', value='this resumes what you just paused.', inline=False)
     embed.add_field(name='COMMAND 7: hello', value='this lets you say hi to the bot.', inline=False)
     embed.add_field(name='COMMAND 8: invite', value='generates a link for you to invite unseebot to your server', inline=False)
-    embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played by the bot and makes the bot leave.', inline=False)
-    embed.set_footer(text='page 1 of 3')
+    embed.add_field(name='COMMAND 9: stop', value='this stops the current audio being played.', inline=False)
+    embed.set_footer(text='page 1 of 4')
 
     embed2 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed2.add_field(name='COMMAND 10: yt', value='this creates a youtube together event in your current voice channel.')
@@ -162,7 +162,7 @@ async def help(ctx, message=None):
     embed2.add_field(name='COMMAND 15: bwstats', value='this gives a link to the bedwars stats website.', inline=False)
     embed2.add_field(name='COMMAND 16: sudo', value='impersonate your friends and foes. **CAUSE CHAOS**', inline=False)
     embed2.add_field(name='COMMAND 17: unseebot', value='essentially an about me sent in your dms', inline=False)
-    embed2.set_footer(text='page 2 of 3')
+    embed2.set_footer(text='page 2 of 4')
 
     embed3 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed3.add_field(name='COMMAND 18: github', value='gives a link to the unseebot github page', inline=False)
@@ -170,7 +170,14 @@ async def help(ctx, message=None):
     embed3.add_field(name='COMMAND 20: nick', value='changes the nickname of the selected user', inline=False)
     embed3.add_field(name='COMMAND 21: cat', value='shows a picture of cure kitty and tells you about pussies', inline=False)
     embed3.add_field(name='COMMAND 22: dog', value='shows a doggo and gives doggo facts', inline=False)
-    embed3.set_footer(text='page 3 of 3')
+    embed3.add_field(name='COMMAND 23: playing', value='generates an embed showing audio that is currently being played', inline=False)
+    embed3.add_field(name='COMMAND 24: queue', value='lists the current song queue', inline=False)
+    embed3.add_field(name='COMMAND 25: loop', value='loops the current song', inline=False)
+    embed3.set_footer(text='page 3 of 4')
+
+    embed4 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
+    embed4.add_field(name='COMMAND 26: skip', value='skips current song in the queue', inline=False)
+    embed4.set_footer(text='page 4 of 4')
 
     if message == None:
         button = Button(label='Page 2', style=discord.ButtonStyle.blurple)
