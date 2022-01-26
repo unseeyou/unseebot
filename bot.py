@@ -20,6 +20,8 @@ async def on_ready():
     print("If you are seeing this then unseeyou's epic bot is working!")
     await client.change_presence(activity=discord.Game('With your mind - >help'))
 
+client.load_extension("cogs.bettermusic")
+
 @client.event
 async def on_command_error(error, ctx):
     if isinstance(error, commands.CommandNotFound):
@@ -199,14 +201,13 @@ async def _8ball(ctx, message=None):
     else:
         await ctx.send('ask me a question')
 
-client.load_extension("cogs.music")
 
 @client.command()
 async def nick(ctx, member: discord.Member, nick):
     await ctx.send('reminder: I can only change nicknames of people when I have the perms and also my role is higher than theirs in the settings.')
     if nick:
         await member.edit(nick=nick)
-        await ctx.send(f'{member} is now called {member.nick} in this server')
+        await ctx.send(f'nickname changed!')
     else:
         await ctx.send('Invalid nickname')
 
