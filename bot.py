@@ -128,7 +128,7 @@ async def spam(ctx):
 @client.command()
 async def sudo(ctx, member: discord.Member, *, message=None):
     if message == None:
-            await ctx.send(f'You gotta pick someone to impersonate first')
+            await ctx.send(f'SyntaxError: a person and message must be specified')
             return
 
     webhook = await ctx.channel.create_webhook(name=member.name)
@@ -183,19 +183,24 @@ async def help(ctx, message=None):
         button = Button(label='Page 2', style=discord.ButtonStyle.blurple)
         button2 = Button(label='Page 1', style=discord.ButtonStyle.blurple)
         button3 = Button(label='Page 3', style=discord.ButtonStyle.blurple)
+        button4 = Button(label='Page 4', style=discord.ButtonStyle.blurple)
         async def button_callback(interaction):
             await interaction.response.edit_message(embed=embed2)
         async def buttoncallback(interaction):
             await interaction.response.edit_message(embed=embed)
         async def butcal(interaction):
             await interaction.response.edit_message(embed=embed3)
+        async def callback3(interaction):
+            await interaction.response.edit_message(embed=embed4)
         button.callback=button_callback
         button2.callback=buttoncallback
         button3.callback=butcal
+        button4.callback=callback3
         view = View()
         view.add_item(button2)
         view.add_item(button)
         view.add_item(button3)
+        view.add_item(button4)
         await ctx.send(embed=embed, view=view)
     else:
         await ctx.send('this page does not exist. please run >help')
