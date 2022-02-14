@@ -21,6 +21,7 @@ async def on_ready():
     await client.change_presence(activity=discord.Game('With your mind - >help'))
 
 client.load_extension("cogs.bettermusic")
+client.load_extension("cogs.meme")
 
 @client.event
 async def on_command_error(error, ctx):
@@ -71,9 +72,9 @@ async def betrayal(ctx):
     invite = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'betrayal')
     await ctx.send(f'click on this link to start the game!\n{invite}')
 
-@client.command()
+@client.command(aliases=['draw', 'skribbl', 'skribble', 'skribbl.io'])
 async def doodle(ctx):
-    invite = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'doodle-crew')
+    invite = await client.togetherControl.create_link(ctx.author.voice.channel.id, 'sketch-heads')
     await ctx.send(f'click on this link to start the game!\n{invite}')
 
 @client.command()
@@ -177,6 +178,7 @@ async def help(ctx, message=None):
 
     embed4 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed4.add_field(name='COMMAND 26: skip', value='skips current song in the queue', inline=False)
+    embed4.add_field(name='COMMAND 27: meme', value='gets a meme from reddit', inline=False)
     embed4.set_footer(text='page 4 of 4')
 
     if message == None:
