@@ -22,6 +22,7 @@ async def on_ready():
 
 client.load_extension("cogs.bettermusic")
 client.load_extension("cogs.meme")
+client.load_extension("cogs.tictactoe")
 
 @client.event
 async def on_command_error(error, ctx):
@@ -179,6 +180,7 @@ async def help(ctx, message=None):
     embed4 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou",colour=discord.Colour.dark_gold())
     embed4.add_field(name='COMMAND 26: skip', value='skips current song in the queue', inline=False)
     embed4.add_field(name='COMMAND 27: meme', value='gets a meme from reddit', inline=False)
+    embed4.add_field(name='COMMAND 28: tictactoe or XO', value='launches a game of tic tac toe!', inline=False)
     embed4.set_footer(text='page 4 of 4')
 
     if message == None:
