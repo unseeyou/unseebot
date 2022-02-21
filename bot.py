@@ -236,4 +236,8 @@ async def github(ctx):
     git.set_image(url='https://images-ext-2.discordapp.net/external/pe2rnxtS-petcef7jYVHtm1ncabRKulTvDV70G1F5O8/https/repository-images.githubusercontent.com/435063686/e6f3942e-98dd-407b-9fbc-4ba1dbe89849')
     await ctx.send(embed=git)
 
+@client.command()
+async def ping(ctx):
+    await ctx.send('PONG! my latency is: `{0} seconds`'.format(round(client.latency, 3)))
+
 client.run(TOKEN)
