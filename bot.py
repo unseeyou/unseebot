@@ -2,6 +2,7 @@ import random
 import os
 import discord
 import aiohttp
+import time
 from discord.ui import Button, View
 from dotenv import load_dotenv
 from dcactivity import DCActivity
@@ -23,9 +24,10 @@ async def on_ready():
 client.load_extension("cogs.bettermusic")
 client.load_extension("cogs.meme")
 client.load_extension("cogs.tictactoe")
+client.load_extension("cogs.hystats")
 
 @client.event
-async def on_command_error(error, ctx):
+async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Sorry, this command does not exist. Contact unseeyou#2912 if you think this should be added.")
 
@@ -181,6 +183,7 @@ async def help(ctx, message=None):
     embed4.add_field(name='COMMAND 26: skip', value='skips current song in the queue', inline=False)
     embed4.add_field(name='COMMAND 27: meme', value='gets a meme from reddit', inline=False)
     embed4.add_field(name='COMMAND 28: tictactoe or XO', value='launches a game of tic tac toe!', inline=False)
+    embed4.add_field(name='COMMAND 29: hystats', value='shows hypixel stats for bedwars, skywars and duels. **Requires you to have played gamemodes to work**', inline=False)
     embed4.set_footer(text='page 4 of 4')
 
     if message == None:
@@ -240,6 +243,10 @@ async def github(ctx):
 
 @client.command()
 async def ping(ctx):
-    await ctx.send('PONG! my latency is: `{0} seconds`'.format(round(client.latency, 3)))
+    before = time.monotonic()
+    message = await ctx.send("Pong!")
+    ping = (time.monotonic() - before) * 1000
+    await message.edit(content=f"Pong! My ping is `{int(ping)}ms`")
+    print(f'Ping: `{int(ping)} ms`')
 
 client.run(TOKEN)
