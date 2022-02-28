@@ -45,7 +45,8 @@ class Meme(commands.Cog):
             end_button = Button(label='End Interaction', style=discord.ButtonStyle.danger)
             async def end_callback(interaction):
                 view2 = View()
-                await interaction.response.edit_message(embed=discord.Embed(title='INTERACTION ENDED', colour=discord.Colour.brand_red()), view=view2)
+                await interaction.response.edit_message(embed=embed, view=view2)
+                await ctx.send('Interaction Ended')
 
             end_button.callback = end_callback
             view.add_item(end_button)
