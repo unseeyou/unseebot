@@ -13,7 +13,6 @@ REVERSE_PQ_PREFIX = -(BASE - 0.5 * GROWTH) / GROWTH
 REVERSE_CONST = REVERSE_PQ_PREFIX
 GROWTH_DIVIDES_2 = 2 / GROWTH
 
-
 class stats(commands.Cog):
     @commands.command()
     async def hystats(self,ctx,msg=None):
