@@ -18,13 +18,15 @@ TOKEN = os.getenv("UNSEEBOT_TOKEN")
 async def on_ready():
     client.togetherControl = await DiscordTogether(TOKEN)
     print("If you are seeing this then unseeyou's epic bot is working!")
-    await client.change_presence(activity=discord.Game('With your mind - >help'))
+    await client.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
 
-client.load_extension("cogs.bettermusic")
 client.load_extension("cogs.meme")
 client.load_extension("cogs.tictactoe")
 client.load_extension("cogs.hystats")
 client.load_extension("cogs.help")
+client.load_extension("cogs.epic")
+client.load_extension("cogs.pplength")
+client.load_extension("cogs.urban")
 
 @client.event
 async def on_command_error(ctx, error):
@@ -149,15 +151,6 @@ async def _8ball(ctx, message=None):
         await ctx.send(random.choice(list))
     else:
         await ctx.send('ask me a question')
-
-@client.command()
-async def nick(ctx, member: discord.Member, nick):
-    await ctx.send('reminder: I can only change nicknames of people when I have the perms and also my role is higher than theirs in the settings.')
-    if nick:
-        await member.edit(nick=nick)
-        await ctx.send(f'nickname changed!')
-    else:
-        await ctx.send('Invalid nickname')
 
 @client.command()
 async def invite(ctx):
