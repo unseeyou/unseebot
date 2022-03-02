@@ -21,10 +21,10 @@ class Meme(commands.Cog):
             embed.set_image(url=json['url'])
             embed.set_footer(text='r/' + json['subreddit'] + ' posted by u/' + json['author'])
 
-            #TODO: next meme interaction button here:
             next_meme = Button(label='Next Meme', style=discord.ButtonStyle.green)
             async def callback(interaction):
                 async with aiohttp.ClientSession() as session2:
+                    global newembed
                     rng2 = random.randrange(0, 3)
                     if rng2 == 1:
                         request2 = await session2.get("https://meme-api.herokuapp.com/gimme/memes")
@@ -36,16 +36,20 @@ class Meme(commands.Cog):
                     newembed = discord.Embed(title=json2['title'], colour=discord.Colour.brand_red(), url=json2['postLink'])
                     newembed.set_image(url=json2['url'])
                     newembed.set_footer(text='r/' + json2['subreddit'] + ' posted by u/' + json2['author'])
+                next_meme = Button(label='Next Meme', style=discord.ButtonStyle.green)
+                view = View()
+                view.add_item(next_meme)
+                next_meme.callback = callback
+                end_button.callback = end_callback
+                view.add_item(end_button)
                 await interaction.response.edit_message(embed=newembed, view=view)
             next_meme.callback = callback
             view = View()
             view.add_item(next_meme)
-            #Do I really need an end interaction button?
-            #TODO THE ANSWER IS YES I DO NEED AN END INTERACTION
             end_button = Button(label='End Interaction', style=discord.ButtonStyle.danger)
             async def end_callback(interaction):
                 view2 = View()
-                await interaction.response.edit_message(embed=embed, view=view2)
+                await interaction.response.edit_message(embed=newembed, view=view2)
                 await ctx.send('Interaction Ended')
 
             end_button.callback = end_callback
