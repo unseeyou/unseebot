@@ -16,11 +16,9 @@ class Meme(commands.Cog):
             elif rng == 2:
                 request = await session.get("https://meme-api.herokuapp.com/gimme/me_irl")
             json = await request.json()
-
             embed = discord.Embed(title=json['title'], colour=discord.Colour.brand_red(), url=json['postLink'])
             embed.set_image(url=json['url'])
             embed.set_footer(text='r/' + json['subreddit'] + ' posted by u/' + json['author'])
-
             next_meme = Button(label='Next Meme', style=discord.ButtonStyle.green)
             async def callback(interaction):
                 async with aiohttp.ClientSession() as session2:
@@ -49,12 +47,10 @@ class Meme(commands.Cog):
             end_button = Button(label='End Interaction', style=discord.ButtonStyle.danger)
             async def end_callback(interaction):
                 view2 = View()
-                await interaction.response.edit_message(embed=newembed, view=view2)
-                await ctx.send('Interaction Ended')
-
+                await interaction.response.edit_message(view=view2)
             end_button.callback = end_callback
             view.add_item(end_button)
-            await ctx.send(embed=embed, view=view)
+            await ctx.send(embed=embed, view=view) #TODO: fix bug where for some reason test_bot won't recognise 'view='
 
 def setup(bot):
     bot.add_cog(Meme(bot))
