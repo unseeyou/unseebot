@@ -1,0 +1,4 @@
+discord.py 2.0 (beta)
+aiohttp any version
+discord-together 1.2.2
+python-dotenv any version
