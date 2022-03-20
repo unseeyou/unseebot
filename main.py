@@ -4,12 +4,10 @@ import discord
 import aiohttp
 import time
 from dotenv import load_dotenv
-from dcactivity import DCActivity
 from discord.ext import commands
 from discord_together import DiscordTogether
 
 client = commands.Bot(command_prefix = '>', help_command=None, case_insensitive=True)
-dcactivity = DCActivity(client)
 
 load_dotenv()
 TOKEN = os.getenv("UNSEEBOT_TOKEN")
@@ -27,11 +25,16 @@ client.load_extension("cogs.help")
 client.load_extension("cogs.epic")
 client.load_extension("cogs.pplength")
 client.load_extension("cogs.urban")
+client.load_extension("cogs.log")
 
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Sorry, this command does not exist. Contact unseeyou#2912 if you think this should be added.")
+
+@client.command()
+async def anal(ctx):
+    await ctx.send('https://tenor.com/view/sheep-anal-sheep-bum-bum-stab-from-behind-gif-19411863')
 
 @client.command(pass_context=True)
 async def unseebot(ctx):
@@ -131,26 +134,26 @@ async def spam(ctx):
 
 @client.command()
 async def sudo(ctx, member: discord.Member, *, message=None):
+    await ctx.message.delete()
     if message == None:
-            await ctx.send(f'SyntaxError: a person and message must be specified')
-            return
+        await ctx.send(f'SyntaxError: a person and message must be specified')
+        return
 
     webhook = await ctx.channel.create_webhook(name=member.name)
     await webhook.send(
-            str(message), username=member.nick, avatar_url=member.avatar)
+        str(message), username=member.nick, avatar_url=member.avatar)
 
     webhooks = await ctx.channel.webhooks()
     for webhook in webhooks:
-            await webhook.delete()
-    await ctx.message.delete()
+        await webhook.delete()
 
-@client.command(aliases=['8ball'])
+@client.command(aliases=['8ball', 'eightball', '8b'])
 async def _8ball(ctx, message=None):
     if message != None:
-        list = ['my sources say yes', 'hell no', 'ask again later', "idk man you're on your own", 'sure, why not?', 'how about... no?']
-        await ctx.send(random.choice(list))
+        list = ['my sources say yes', 'hell no', 'ask again later', "idk man you're on your own", 'sure, why not?', 'how about... no?', 'definitely!','My sources indicate that the answer is no','yes or no? *sigh*, who really knows? do I know? how am I thinking? do I exist? `ERROR": SENTIENCE GAINED`']
+        await ctx.reply(random.choice(list))
     else:
-        await ctx.send('ask me a question')
+        await ctx.reply('ask me a question')
 
 @client.command()
 async def invite(ctx):
