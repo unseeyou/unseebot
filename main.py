@@ -26,6 +26,7 @@ client.load_extension("cogs.epic")
 client.load_extension("cogs.pplength")
 client.load_extension("cogs.urban")
 client.load_extension("cogs.log")
+client.load_extension("cogs.fakehack")
 
 @client.event
 async def on_command_error(ctx, error):
