@@ -21,7 +21,7 @@ async def on_ready():
 client.load_extension("cogs.meme")
 client.load_extension("cogs.tictactoe")
 client.load_extension("cogs.hystats")
-client.load_extension("cogs.help")
+client.load_extension("cogs.dropdownhelp")
 client.load_extension("cogs.epic")
 client.load_extension("cogs.pplength")
 client.load_extension("cogs.urban")
