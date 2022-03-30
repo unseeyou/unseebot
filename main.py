@@ -37,6 +37,10 @@ async def on_command_error(ctx, error):
 async def anal(ctx):
     await ctx.send('https://tenor.com/view/sheep-anal-sheep-bum-bum-stab-from-behind-gif-19411863')
 
+@client.command(aliases=['trigger'])
+async def triggered(ctx):
+    await ctx.send('https://tenor.com/view/hamster-triggered-rage-shaking-gif-17789643')
+
 @client.command(pass_context=True)
 async def unseebot(ctx):
     await ctx.send('Check your dms!')
