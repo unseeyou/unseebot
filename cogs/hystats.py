@@ -7,11 +7,6 @@ import math
 
 load_dotenv()
 TOKEN = os.getenv("HYPIXEL_API")
-BASE = 10_000
-GROWTH = 2_500
-REVERSE_PQ_PREFIX = -(BASE - 0.5 * GROWTH) / GROWTH
-REVERSE_CONST = REVERSE_PQ_PREFIX
-GROWTH_DIVIDES_2 = 2 / GROWTH
 
 class stats(commands.Cog):
     @commands.command()
@@ -26,8 +21,9 @@ class stats(commands.Cog):
             duels = stats["Duels"]
             bedwars = stats["Bedwars"]
             skywars = stats["SkyWars"]
-            xp = int(playerdata["networkExp"])
-            level = str(math.floor(1 + REVERSE_PQ_PREFIX + math.sqrt(REVERSE_CONST + GROWTH_DIVIDES_2 * xp)))
+            network_experience = int(playerdata["networkExp"])
+            network_level = (math.sqrt((2 * network_experience) + 30625) / 50) - 2.5
+            level = round(network_level, 2)
             uuid = playerdata["uuid"]
             player = json["player"]
             if "rank" in player:
