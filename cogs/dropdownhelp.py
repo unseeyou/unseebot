@@ -52,7 +52,7 @@ class Select(discord.ui.Select):
     embed4.set_footer(text='page 5 of 5')
 
     embed5 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
-    embed5.add_field(name='filler', value='there will be new commands here soon!',inline=False)
+    embed5.add_field(name='echo', value='usage: `>echo {message}`',inline=False)
     embed5.set_footer(text='page 4 of 5')
     async def callback(self,interaction):
         if self.values[0] == "Page 1":
