@@ -1,3 +1,6 @@
+# modbot
+this is just an extra bot with moderation tools
+
 # unseebot
 feel free to reuse this code and/or improve on it!
 
