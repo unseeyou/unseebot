@@ -1,13 +1,16 @@
 import random
 import os
+import io
 import discord
 import aiohttp
 import time
 from dotenv import load_dotenv
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord_together import DiscordTogether
 
-bot = commands.Bot(command_prefix ='>', help_command=None, case_insensitive=True)
+intents = discord.Intents.default()
+intents.members = True
+bot = commands.Bot(command_prefix ='>', help_command=None, case_insensitive=True, intents=intents)
 
 load_dotenv()
 TOKEN = os.getenv("UNSEEBOT_TOKEN")
@@ -34,13 +37,31 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Sorry, this command does not exist. Contact unseeyou#2912 if you think this should be added.")
 
+@bot.listen()
+async def on_member_join(member):
+    channel = discord.utils.get(member.guild.channels, name="join-leave")
+    if channel is not None:
+        embed = discord.Embed(color=0x4a3d9a)
+        embed.add_field(name="Welcome", value=f"@{member.name} has joined {member.guild.name}", inline=False)
+        await channel.send(embed=embed)
+    else:
+        pass
+
 @bot.command()
 async def anal(ctx):
     await ctx.send('https://tenor.com/view/sheep-anal-sheep-bum-bum-stab-from-behind-gif-19411863')
 
-@bot.command(aliases=['trigger'])
-async def triggered(ctx):
-    await ctx.send('https://tenor.com/view/hamster-triggered-rage-shaking-gif-17789643')
+@bot.command(aliases=['trigger','trig'])
+async def triggered(ctx, user: discord.User = None):
+    if user is None:
+        user = ctx.message.author
+    else:
+        pass
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'https://some-random-api.ml/canvas/triggered?avatar={user.avatar.url}') as response:
+            buffer = io.BytesIO(await response.read())
+
+    await ctx.send(file=discord.File(buffer, filename='triggered.gif'))
 
 @bot.command(pass_context=True)
 async def unseebot(ctx):
