@@ -6,7 +6,7 @@ feel free to reuse this code and/or improve on it!
 
 HOW TO USE BOT:
 1. install the packages from requirements.txt
-2. download main.py + the cogs folder and add another folder called hystats in the cogs folder
+2. download main.py + the cogs folder and add another folder called hystats-data in the cogs folder
 3. unzip the folder
 4. create a .env file with your own api keys inside the main folder (make sure the variable names are the same)
 5. run main.py to get the bot online.
