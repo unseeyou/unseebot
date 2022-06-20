@@ -42,7 +42,17 @@ async def on_member_join(member):
     channel = discord.utils.get(member.guild.channels, name="join-leave")
     if channel is not None:
         embed = discord.Embed(color=0x4a3d9a)
-        embed.add_field(name="Welcome", value=f"@{member.name} has joined {member.guild.name}", inline=False)
+        embed.add_field(name="Welcome", value=f"{member.mention} has joined {member.guild.name}", inline=False)
+        await channel.send(embed=embed)
+    else:
+        pass
+
+@bot.listen()
+async def on_member_remove(member):
+    channel = discord.utils.get(member.guild.channels, name="join-leave")
+    if channel is not None:
+        embed = discord.Embed(color=0x4a3d9a)
+        embed.add_field(name="Goodbye", value=f"{member.mention} has left {member.guild.name}", inline=False)
         await channel.send(embed=embed)
     else:
         pass
@@ -131,6 +141,7 @@ async def bwstats(ctx, message=None):
         await ctx.send(embed=embed1)
     else:
         await ctx.send(embed=embed2)
+
 @bot.command()
 async def hello(ctx):
     await ctx.send('Hello!')
