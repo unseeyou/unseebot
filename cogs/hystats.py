@@ -32,7 +32,6 @@ def get_cache_data(playername):
         return json.load(file) # opens player's data file and gets the json inside
 
 def delete_old_data(ctx):
-    print('requested old data delete')
     try:
         files = os.listdir('cogs/hystats-data/')
         for file in files:
