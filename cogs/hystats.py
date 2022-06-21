@@ -15,24 +15,43 @@ async def request_stats(name):
         request = await session.get(f'https://api.hypixel.net/player?name={name}&key={TOKEN}')
         json = await request.json()
     if json["success"] is not False and json["player"] is not None:
-        cache_stats(name, json)
+        cache_stats(name, json) # only saves data if there is no error code
     return json
 
 def cache_stats(playername,stats):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
     with open(f'cogs/{folder}/{filename}','w') as file:
-        file.write(json.dumps(stats))
+        file.write(json.dumps(stats)) # saves each player's data in their own file
     return filename
 
 def get_cache_data(playername):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
     with open(f'cogs/{folder}/{filename}','r') as file:
-        return json.load(file)
+        return json.load(file) # opens player's data file and gets the json inside
+
+def delete_old_data(ctx):
+    print('requested old data delete')
+    try:
+        files = os.listdir('cogs/hystats-data/')
+        for file in files:
+            x = os.stat('cogs/hystats-data/'+file)
+            age = (time.time() - x.st_mtime)
+            if int(age) >= 60:
+                os.remove('cogs/hystats-data/'+file)
+                print(f'deleted {file}')
+            else:
+                pass
+
+    except BaseException as err:
+        await ctx.send(f"Unexpected {err=}, {type(err)=}")
+
+    print('deleted data')
+    return True
 
 def create_embed(data):
-    json = data
+    json = data # creates embed
     playerdata = json["player"]
     stats = playerdata["stats"]
     duels = stats["Duels"]
@@ -63,7 +82,7 @@ def create_embed(data):
                     value=f'Games Played: {bedwars["games_played_bedwars"]}, Games Won: {bedwars["wins_bedwars"]}',
                     inline=False)
     embed.add_field(name="Skywars Stats",
-                    value=f'Games Played: {skywars["games_played_skywars"]}, Games Won: {skywars["games_played_skywars"] - skywars["losses"]}, Souls: {skywars["souls"]}')
+                    value=f'Games Played: {skywars["games_played_skywars"]}, Games Won: {skywars["wins"]}, Souls: {skywars["souls"]}')
     embed.set_image(url=f'http://crafatar.com/renders/body/{uuid}.jpg?overlay')
     return embed
 
@@ -78,7 +97,7 @@ class stats(commands.Cog):
                 await ctx.send(embed=embed)
 
             except Exception:
-                await ctx.send('Error: Insufficient Data')
+                await ctx.send('Error: Insufficient Data or Player does not exist/have a premium account')
 
         elif not json["success"] and "recently" in json["cause"]:
             embed = create_embed(get_cache_data(msg))
@@ -89,6 +108,8 @@ class stats(commands.Cog):
 
         else:
             await ctx.send(f'Error: {json["cause"]}')
+
+        delete_old_data(ctx)
 
 def setup(bot):
     bot.add_cog(stats(bot))
