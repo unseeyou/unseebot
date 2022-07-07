@@ -55,6 +55,7 @@ class Select(discord.ui.Select):
     embed5 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
     embed5.add_field(name='echo', value='usage: `>echo {message}`',inline=False)
     embed5.add_field(name='triggered', value='usage: `>triggered {username}`', inline=False)
+    embed5.add_field(name='tts', value='`usage:>tts {msg}`', inline=False)
     embed5.set_footer(text='page 4 of 5')
     async def callback(self,interaction):
         if self.values[0] == "Page 1":
