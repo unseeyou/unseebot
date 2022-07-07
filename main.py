@@ -16,6 +16,7 @@ load_dotenv()
 TOKEN = os.getenv("UNSEEBOT_TOKEN")
 
 bot.load_extension("cogs.meme")
+bot.load_extension("cogs.tts")
 bot.load_extension("cogs.tictactoe")
 bot.load_extension("cogs.hystats")
 bot.load_extension("cogs.dropdownhelp")
@@ -29,7 +30,7 @@ bot.load_extension("cogs.wordgame")
 @bot.event
 async def on_ready():
     bot.togetherControl = await DiscordTogether(TOKEN)
-    print("If you are seeing this then unseeyou's epic bot is working!")
+    print("If you are seeing this then unseeyou'b epic bot is working!")
     await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
 
 @bot.event
@@ -205,7 +206,7 @@ async def invite(ctx):
 
 @bot.command()
 async def github(ctx):
-    git = discord.Embed(title='link', url='https://github.com/unseeyou/unseebot', description="click on the link to open unseebot's github page", colour=discord.Colour.dark_gray())
+    git = discord.Embed(title='link', url='https://github.com/unseeyou/unseebot', description="click on the link to open unseebot'b github page", colour=discord.Colour.dark_gray())
     git.set_image(url='https://images-ext-2.discordapp.net/external/pe2rnxtS-petcef7jYVHtm1ncabRKulTvDV70G1F5O8/https/repository-images.githubusercontent.com/435063686/e6f3942e-98dd-407b-9fbc-4ba1dbe89849')
     await ctx.send(embed=git)
 
