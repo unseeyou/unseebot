@@ -22,14 +22,14 @@ def cache_stats(playername,stats):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
     with open(f'cogs/{folder}/{filename}','w') as file:
-        file.write(json.dumps(stats)) # saves each player's data in their own file
+        file.write(json.dumps(stats)) # saves each player'b data in their own file
     return filename
 
 def get_cache_data(playername):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
     with open(f'cogs/{folder}/{filename}','r') as file:
-        return json.load(file) # opens player's data file and gets the json inside
+        return json.load(file) # opens player'b data file and gets the json inside
 
 def delete_old_data():
     try:
@@ -53,43 +53,60 @@ def create_embed(data):
     playerdata = json["player"]
     stats = playerdata["stats"]
 
-    duels = stats["Duels"]
     try:
-        duels_games = duels["games_played_duels"]
-    except BaseException:
-        duels_games = 0
-    try:
-        duels_wins = duels["wins"]
+        duels = stats["Duels"]
+        try:
+            duels_games = duels["games_played_duels"]
+        except BaseException:
+            duels_games = 0
+        try:
+            duels_wins = duels["wins"]
+        except BaseException:
+            duels_wins = 0
     except BaseException:
         duels_wins = 0
+        duels_games = 0
 
-    bedwars = stats["Bedwars"]
     try:
-        bedwars_games = bedwars["games_played_bedwars"]
+        bedwars = stats["Bedwars"]
+        try:
+            bedwars_games = bedwars["games_played_bedwars"]
+        except BaseException:
+            bedwars_games = 0
+        try:
+            bedwars_wins = bedwars["wins_bedwars"]
+        except BaseException:
+            bedwars_wins = 0
+
     except BaseException:
         bedwars_games = 0
-    try:
-        bedwars_wins = bedwars["wins_bedwars"]
-    except BaseException:
         bedwars_wins = 0
 
-    skywars = stats["SkyWars"]
     try:
-        skywars_games = skywars["games_played_skywars"]
-    except BaseException:
-        skywars_games = 0
-    try:
-        skywars_wins = skywars["wins"]
+        skywars = stats["SkyWars"]
+        try:
+            skywars_games = skywars["games_played_skywars"]
+        except BaseException:
+            skywars_games = 0
+        try:
+            skywars_wins = skywars["wins"]
+        except BaseException:
+            skywars_wins = 0
+        try:
+            souls = skywars["souls"]
+        except BaseException:
+            souls = 0
+
     except BaseException:
         skywars_wins = 0
-    try:
-        souls = skywars["souls"]
-    except BaseException:
+        skywars_games = 0
         souls = 0
-
-    network_experience = int(playerdata["networkExp"])
-    network_level = (math.sqrt((2 * network_experience) + 30625) / 50) - 2.5
-    level = round(network_level, 2)
+    try:
+        network_experience = int(playerdata["networkExp"])
+        network_level = (math.sqrt((2 * network_experience) + 30625) / 50) - 2.5
+        level = round(network_level, 2)
+    except BaseException:
+        level = 0
     uuid = playerdata["uuid"]
     player = json["player"]
     try:
@@ -130,7 +147,7 @@ class stats(commands.Cog):
                 await ctx.send(embed=embed)
 
             except BaseException as error:
-                await ctx.send(f'Exception: {error}')
+                await ctx.send(f'Exception: {error}, are you searching up a cracked minecraft account?')
 
         elif not json["success"] and "recently" in json["cause"]:
             try:
