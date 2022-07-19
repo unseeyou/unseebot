@@ -217,4 +217,4 @@ async def ping(ctx):
     await message.edit(content=f"Pong! My ping is `{int(ping)}ms`")
     print(f'Ping: `{int(ping)} ms`')
 
-bot.run('OTcxNzE4MTgzMTY3ODY0ODYz.YnOlFA.XqZ4iJdnBgEBJqzmD6us1YwIe-0')
+bot.run(TOKEN)
