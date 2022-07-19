@@ -10,9 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix=[';','//'], case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix=[';','//','unseeyou '], case_insensitive=True, intents=intents)
 TOKEN = os.getenv('MODBOT_TOKEN')
-
 
 @bot.event
 async def on_ready():
@@ -152,11 +151,44 @@ async def button(ctx):
     embed = discord.Embed(title='USE WITH CAUTION',colour=discord.Colour.red())
 
     async def callback(interaction):
-        await interaction.response.send_message('use it with caution!', ephemeral=True)
+        if ctx.message.author.id == 650923352097292299:
+            await interaction.response.send_message('__**SERVER WILL GO BOOM BOOM IN 30 SECONDS**__')
+        else:
+            await interaction.response.send_message('`Error 69420: you are not unseeyou`', ephemeral=True)
     button = Button(label='DANGER', style=discord.ButtonStyle.danger)
     button.callback = callback
     view.add_item(button)
     await ctx.send(embed=embed, view=view)
+
+@bot.command()
+@has_permissions(administrator=True)
+async def disguise(ctx,member: discord.Member=None):
+    def get_msg(msg):
+        if msg.author.id == ctx.message.author.id:
+            return msg.content
+        else:
+            pass
+
+    if member is None:
+        await ctx.send('please specify someone to disguise')
+
+    else:
+        await ctx.message.delete()
+        webhook = await ctx.channel.create_webhook(name=member.name)
+        msg = ctx.message
+
+        while msg.content != '.stop':
+            msg = await bot.wait_for("message", check=get_msg)
+            await msg.delete()
+            if msg.content != '.stop':
+                await webhook.send(str(msg.content), username=member.nick, avatar_url=member.avatar)
+            else:
+                pass
+            time.sleep(1)
+
+        webhooks = await ctx.channel.webhooks()
+        for webhook in webhooks:
+            await webhook.delete()
 
 @bot.command(help='makes an admin role with custom name')
 @has_permissions(administrator=True)

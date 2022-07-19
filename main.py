@@ -25,7 +25,6 @@ bot.load_extension("cogs.pplength")
 bot.load_extension("cogs.urban")
 bot.load_extension("cogs.log")
 bot.load_extension("cogs.fakehack")
-bot.load_extension("cogs.wordgame")
 
 @bot.event
 async def on_ready():
@@ -218,4 +217,4 @@ async def ping(ctx):
     await message.edit(content=f"Pong! My ping is `{int(ping)}ms`")
     print(f'Ping: `{int(ping)} ms`')
 
-bot.run(TOKEN)
+bot.run('OTcxNzE4MTgzMTY3ODY0ODYz.YnOlFA.XqZ4iJdnBgEBJqzmD6us1YwIe-0')
