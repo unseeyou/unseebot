@@ -36,10 +36,10 @@ def delete_old_data():
     try:
         files = os.listdir('cogs/hystats-data/')
         for file in files:
-            x = os.stat('cogs/hystats-data/'+file)
+            x = os.stat('cogs/hystats-data/' + str(file))
             age = (time.time() - x.st_mtime)
             if int(age) >= 60:
-                os.remove('cogs/hystats-data/'+file)
+                os.remove('cogs/hystats-data/' + str(file))
             else:
                 pass
 
@@ -113,7 +113,7 @@ def create_embed(data):
         souls = 0
     try:
         network_experience = int(playerdata["networkExp"])
-        network_level = (math.sqrt((2 * network_experience) + 30625) / 50) - 2.5
+        network_level = (math.sqrt((2 * int(network_experience)) + 30625) / 50) - 2.5
         level = round(network_level, 2)
     except BaseException:
         level = 0
@@ -121,12 +121,12 @@ def create_embed(data):
     player = json["player"]
     try:
         lastlog = datetime.datetime.fromtimestamp(int(player["lastLogin"]/1000)).strftime("%d/%m/%Y %H:%M:%S")
-    except BaseException as err:
-        lastlog = "Error: "+str(err)
+    except Exception as err:
+        lastlog = str(err)
     try:
         firstLog = datetime.datetime.fromtimestamp(int(player["firstLogin"]/1000)).strftime("%d/%m/%Y %H:%M:%S")
-    except BaseException as err:
-        firstLog = "Error: "+str(err)
+    except Exception as err:
+        firstLog = str(err)
     try:
         if "rank" in player:
             rank = player["rank"]
@@ -140,7 +140,7 @@ def create_embed(data):
         rank = 'Normal'
     username = player["displayname"]
     embed = discord.Embed(title='HyStats', colour=discord.Colour.dark_gold())
-    embed.add_field(name=f'{username}', value='Hypixel Achievement Points: ' + achievement_points,
+    embed.add_field(name=f'{username}', value='Hypixel Achievement Points: ' + str(achievement_points),
                     inline=False)
     embed.add_field(name='Hypixel Rank', value=f"{username}'s Rank: {rank}")
     embed.add_field(name='Hypixel Level', value=f" Hypixel Level: {level}")
@@ -153,7 +153,7 @@ def create_embed(data):
                     inline=False)
     embed.add_field(name="Skywars Stats",
                     value=f'Games Played: {skywars_games}, Games Won: {skywars_wins}, Souls: {souls}')
-    embed.set_image(url=f'http://crafatar.com/renders/body/{uuid}.jpg?overlay')
+    embed.set_image(url=f'http://crafatar.com/renders/body/{str(uuid)}.jpg?overlay')
     return embed
 
 
