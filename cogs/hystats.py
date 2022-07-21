@@ -6,6 +6,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import aiohttp
 import math
+import datetime
 
 load_dotenv()
 TOKEN = os.getenv("HYPIXEL_API")
@@ -22,14 +23,14 @@ def cache_stats(playername,stats):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
     with open(f'cogs/{folder}/{filename}','w') as file:
-        file.write(json.dumps(stats)) # saves each player'b data in their own file
+        file.write(json.dumps(stats)) # saves each player's data in their own file
     return filename
 
 def get_cache_data(playername):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
     with open(f'cogs/{folder}/{filename}','r') as file:
-        return json.load(file) # opens player'b data file and gets the json inside
+        return json.load(file) # opens player's data file and gets the json inside
 
 def delete_old_data():
     try:
@@ -39,7 +40,6 @@ def delete_old_data():
             age = (time.time() - x.st_mtime)
             if int(age) >= 60:
                 os.remove('cogs/hystats-data/'+file)
-                print(f'deleted {file}')
             else:
                 pass
 
@@ -50,9 +50,19 @@ def delete_old_data():
 
 def create_embed(data):
     json = data # creates embed
-    playerdata = json["player"]
-    stats = playerdata["stats"]
+    try:
+        playerdata = json["player"]
+    except BaseException:
+        playerdata = None
+    try:
+        stats = playerdata["stats"]
+    except BaseException:
+        stats = None
 
+    try:
+        achievement_points = str(json["player"]["achievementPoints"])
+    except BaseException:
+        achievement_points = 0
     try:
         duels = stats["Duels"]
         try:
@@ -110,6 +120,14 @@ def create_embed(data):
     uuid = playerdata["uuid"]
     player = json["player"]
     try:
+        lastlog = datetime.datetime.fromtimestamp(int(player["lastLogin"]/1000)).strftime("%d/%m/%Y %H:%M:%S")
+    except BaseException as err:
+        lastlog = "Error: "+str(err)
+    try:
+        firstLog = datetime.datetime.fromtimestamp(int(player["firstLogin"]/1000)).strftime("%d/%m/%Y %H:%M:%S")
+    except BaseException as err:
+        firstLog = "Error: "+str(err)
+    try:
         if "rank" in player:
             rank = player["rank"]
         elif 'monthlyPackageRank' in player and player['monthlyPackageRank'] == "SUPERSTAR":
@@ -122,10 +140,12 @@ def create_embed(data):
         rank = 'Normal'
     username = player["displayname"]
     embed = discord.Embed(title='HyStats', colour=discord.Colour.dark_gold())
-    embed.add_field(name=f'{username}', value='Hypixel Achievement Points: ' + str(player["achievementPoints"]),
+    embed.add_field(name=f'{username}', value='Hypixel Achievement Points: ' + achievement_points,
                     inline=False)
     embed.add_field(name='Hypixel Rank', value=f"{username}'s Rank: {rank}")
     embed.add_field(name='Hypixel Level', value=f" Hypixel Level: {level}")
+    embed.add_field(name='Last Login', value=f"{username} last logged on at: {lastlog}", inline=False)
+    embed.add_field(name='First Login', value=f"{username} first logged at: {firstLog}", inline=False)
     embed.add_field(name='Duels Stats',
                     value=f'Games Played: {duels_games}, Games Won: {duels_wins}', inline=False)
     embed.add_field(name="Bedwars Stats",
