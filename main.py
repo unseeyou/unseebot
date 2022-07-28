@@ -25,6 +25,7 @@ bot.load_extension("cogs.pplength")
 bot.load_extension("cogs.urban")
 bot.load_extension("cogs.log")
 bot.load_extension("cogs.fakehack")
+bot.load_extension("cogs.xkcd")
 
 @bot.event
 async def on_ready():
@@ -36,6 +37,8 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Sorry, this command does not exist. Contact unseeyou#2912 if you think this should be added.")
+    elif isinstance(error, discord.errors.NotFound):
+        pass
 
 @bot.listen()
 async def on_member_join(member):
