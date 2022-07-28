@@ -45,7 +45,7 @@ class Select(discord.ui.Select):
     embed3.set_footer(text='page 3 of 5')
 
     embed4 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
-    embed4.add_field(name='Special Announcement', value='Additional Hypixel Statistics Commands will be added to unseebot SOON!!!')
+    embed4.add_field(name='Special Announcement', value='Check out the Github repo for the most recent updates and docs of unseebot!!!')
     embed4.add_field(name='unseebot extra feature!', value='name a text channel `join-leave` and unseebot will post welcome messages there!', inline=False)
     embed4.add_field(name='Thank You for using unseebot', value='<3')
     embed4.add_field(name='Any Ideas?', value='Please DM unseeyou#2912 if you have any ideas you want to add to unseebot')
@@ -54,8 +54,9 @@ class Select(discord.ui.Select):
 
     embed5 = discord.Embed(title='Help', description="this page sucks lol if you really need help dm unseeyou", colour=discord.Colour.dark_gold())
     embed5.add_field(name='echo', value='usage: `>echo {message}`',inline=False)
-    embed5.add_field(name='triggered', value='usage: `>triggered {username}`', inline=False)
-    embed5.add_field(name='tts', value='`usage:>tts {msg}`', inline=False)
+    embed5.add_field(name='triggered', value='usage: `>triggered {optional username}`', inline=False)
+    embed5.add_field(name='tts', value='`usage: >tts {msg}`', inline=False)
+    embed5.add_field(name='comic | xkcd', value='`usage: >xkcd {OPTIONAL COMIC NUMBER}`', inline=False)
     embed5.set_footer(text='page 4 of 5')
     async def callback(self,interaction):
         if self.values[0] == "Page 1":

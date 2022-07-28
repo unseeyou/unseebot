@@ -4,11 +4,12 @@ from discord.ui import Button, View
 import random
 import aiohttp
 
+
 class Meme(commands.Cog):
     @commands.command(aliases=['m'])
     async def meme(self, ctx):
         async with aiohttp.ClientSession() as session:
-            rng = random.randrange(0,3)
+            rng = random.randrange(0, 3)
             if rng == 1:
                 request = await session.get("https://meme-api.herokuapp.com/gimme/memes")
             elif rng == 0:
@@ -20,6 +21,7 @@ class Meme(commands.Cog):
             embed.set_image(url=json['url'])
             embed.set_footer(text='r/' + json['subreddit'] + ' posted by u/' + json['author'])
             next_meme = Button(label='Next Meme', style=discord.ButtonStyle.green)
+
             async def callback(interaction):
                 async with aiohttp.ClientSession() as session2:
                     global newembed
@@ -31,7 +33,8 @@ class Meme(commands.Cog):
                     elif rng2 == 2:
                         request2 = await session2.get("https://meme-api.herokuapp.com/gimme/me_irl")
                     json2 = await request2.json()
-                    newembed = discord.Embed(title=json2['title'], colour=discord.Colour.brand_red(), url=json2['postLink'])
+                    newembed = discord.Embed(title=json2['title'], colour=discord.Colour.brand_red(),
+                                             url=json2['postLink'])
                     newembed.set_image(url=json2['url'])
                     newembed.set_footer(text='r/' + json2['subreddit'] + ' posted by u/' + json2['author'])
                 next_meme = Button(label='Next Meme', style=discord.ButtonStyle.green)
@@ -41,26 +44,29 @@ class Meme(commands.Cog):
                 end_button.callback = end_callback
                 view.add_item(end_button)
                 await interaction.response.edit_message(embed=newembed, view=view)
+
             next_meme.callback = callback
             view = View()
             view.add_item(next_meme)
             end_button = Button(label='End Interaction', style=discord.ButtonStyle.danger)
+
             async def end_callback(interaction):
                 view2 = View()
                 await interaction.response.edit_message(view=view2)
+
             end_button.callback = end_callback
             view.add_item(end_button)
             await session.close()
             await ctx.send(embed=embed, view=view)
 
-    @commands.command(aliases=['r','redditsearch'])
+    @commands.command(aliases=['r', 'redditsearch'])
     async def reddit(self, ctx, subreddit):
         try:
             async with aiohttp.ClientSession() as session:
                 request = await session.get(f"https://meme-api.herokuapp.com/gimme/{subreddit}")
                 json = await request.json()
                 embed = discord.Embed(title=json['title'], colour=discord.Colour.brand_red(), url=json['postLink'])
-                embed.set_image(url=json['url'])
+                embed.set_image(url=f"{json['url']}")
                 embed.set_footer(text='r/' + json['subreddit'] + ' posted by u/' + json['author'])
                 next_meme = Button(label='Next Post', style=discord.ButtonStyle.green)
 
@@ -72,6 +78,7 @@ class Meme(commands.Cog):
                             request2 = await session2.get(f"https://meme-api.herokuapp.com/gimme/{subreddit}")
                             json2 = await request2.json()
                             return json2
+
                     try:
                         json2 = await make_request(subreddit)
 
@@ -84,8 +91,8 @@ class Meme(commands.Cog):
                             except Exception as error:
                                 continue
 
-
-                    newembed = discord.Embed(title=json2['title'], colour=discord.Colour.brand_red(), url=json2['postLink'])
+                    newembed = discord.Embed(title=json2['title'], colour=discord.Colour.brand_red(),
+                                             url=json2['postLink'])
                     newembed.set_image(url=json2['url'])
                     newembed.set_footer(text='r/' + json2['subreddit'] + ' posted by u/' + json2['author'])
                     next_meme = Button(label='Next Post', style=discord.ButtonStyle.green)
@@ -95,11 +102,11 @@ class Meme(commands.Cog):
                     end_button.callback = end_callback
                     view2.add_item(end_button)
                     await interaction.response.edit_message(embed=newembed, view=view2)
+
                 next_meme.callback = callback
                 view = View()
                 view.add_item(next_meme)
                 end_button = Button(label='End Interaction', style=discord.ButtonStyle.danger)
-
 
                 async def end_callback(interaction):
                     view2 = View()
@@ -110,7 +117,8 @@ class Meme(commands.Cog):
                 await session.close()
                 await ctx.send(embed=embed, view=view)
         except Exception as err:
-            await ctx.send(err)
+            await ctx.send("`Error making request: subreddit has insufficient data`")
+
 
 def setup(bot):
     bot.add_cog(Meme(bot))
