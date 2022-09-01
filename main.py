@@ -3,6 +3,7 @@ import os
 import io
 import discord
 import aiohttp
+import asyncio
 import time
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -10,28 +11,28 @@ from discord_together import DiscordTogether
 
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix ='>', help_command=None, case_insensitive=True, intents=intents)
+intents.message_content = True
+bot = commands.Bot(command_prefix='>', help_command=None, case_insensitive=True, intents=intents)
 
 load_dotenv()
 TOKEN = os.getenv("UNSEEBOT_TOKEN")
 
-bot.load_extension("cogs.meme")
-bot.load_extension("cogs.tts")
-bot.load_extension("cogs.tictactoe")
-bot.load_extension("cogs.hystats")
-bot.load_extension("cogs.dropdownhelp")
-bot.load_extension("cogs.epic")
-bot.load_extension("cogs.pplength")
-bot.load_extension("cogs.urban")
-bot.load_extension("cogs.log")
-bot.load_extension("cogs.fakehack")
-bot.load_extension("cogs.xkcd")
+
+async def activity_warn(ctx):
+    await ctx.send("this is either because the server does not have activities enabled or you don't have nitro.")
+
 
 @bot.event
 async def on_ready():
-    bot.togetherControl = await DiscordTogether(TOKEN)
-    print("If you are seeing this then unseeyou'b epic bot is working!")
+    bot.togetherControl = DiscordTogether(TOKEN)
+    print('loading slash commands...')
+    try:
+        await bot.tree.sync(guild=None)
+    except Exception as e:
+        print(e)
     await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
+    print("If you are seeing this then unseeyou's epic bot is working!")
+
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -39,6 +40,7 @@ async def on_command_error(ctx, error):
         await ctx.send("Sorry, this command does not exist. Contact unseeyou#2912 if you think this should be added.")
     elif isinstance(error, discord.errors.NotFound):
         pass
+
 
 @bot.listen()
 async def on_member_join(member):
@@ -50,6 +52,7 @@ async def on_member_join(member):
     else:
         pass
 
+
 @bot.listen()
 async def on_member_remove(member):
     channel = discord.utils.get(member.guild.channels, name="join-leave")
@@ -60,11 +63,8 @@ async def on_member_remove(member):
     else:
         pass
 
-@bot.command()
-async def anal(ctx):
-    await ctx.send('https://tenor.com/view/sheep-anal-sheep-bum-bum-stab-from-behind-gif-19411863')
 
-@bot.command(aliases=['trigger','trig'])
+@bot.hybrid_command(aliases=['trigger', 'trig'], help='generate a gif of a triggered user')
 async def triggered(ctx, user: discord.User = None):
     if user is None:
         user = ctx.message.author
@@ -76,17 +76,26 @@ async def triggered(ctx, user: discord.User = None):
 
     await ctx.send(file=discord.File(buffer, filename='triggered.gif'))
 
+
 @bot.command(pass_context=True)
 async def unseebot(ctx):
     await ctx.send('Check your dms!')
-    await ctx.message.author.send("Hi! I'm unseebot, a bot made by unseeyou. Please feel free to report any issues to unseeyou via dms. Thanks!")
+    await ctx.message.author.send(
+        "Hi! I'm unseebot, a bot made by unseeyou. Please feel free to report any issues to unseeyou via dms. Thanks!")
 
-@bot.command()
+
+@bot.hybrid_command(help='launches the youtube watch together discord activity if you are in a vc')
 async def yt(ctx):
-    link = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'youtube')
-    await ctx.send(f"Click on the blue link to start the event!\n{link}")
+    try:
+        link = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'youtube')
+        await ctx.send(f"Click on the blue link to start the event!\n{link}")
+    except Exception as err:
+        print(err)
+        await ctx.send(err)
+        await activity_warn(ctx)
 
-@bot.command(aliases=['doggo', 'dogs', 'dogfacts', 'dogfact', 'pup', 'pupper', 'puppy'])
+
+@bot.hybrid_command(aliases=['doggo', 'dogs', 'dogfacts', 'dogfact', 'pup', 'pupper', 'puppy'], help='doggy pics!')
 async def dog(ctx):
     async with aiohttp.ClientSession() as session:
         request = await session.get('https://some-random-api.ml/img/dog')
@@ -98,7 +107,13 @@ async def dog(ctx):
     dogbed.set_footer(text=factjson['fact'])
     await ctx.send(embed=dogbed)
 
-@bot.command(aliases=['kitty', 'kitten', 'meow', 'catfact', 'catfacts'])
+
+@bot.command()
+async def anal(ctx):
+    await ctx.send('https://tenor.com/view/sheep-anal-sheep-bum-bum-stab-from-behind-gif-19411863')
+
+
+@bot.hybrid_command(aliases=['kitty', 'kitten', 'meow', 'catfact', 'catfacts'], help='kitty pics!')
 async def cat(ctx):
     async with aiohttp.ClientSession() as session:
         request1 = await session.get('https://some-random-api.ml/img/cat')
@@ -110,68 +125,84 @@ async def cat(ctx):
     catty.set_footer(text=factjson1['fact'])
     await ctx.send(embed=catty)
 
+
 @bot.command(pass_context=True)
 async def id(ctx):
     id = ctx.message.guild.id
     await ctx.send(id)
 
-@bot.command()
-async def betrayal(ctx):
-    invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'betrayal')
-    await ctx.send(f'click on this link to start the game!\n{invite}')
 
-@bot.command(aliases=['draw', 'skribbl', 'skribble', 'skribbl.io'])
+@bot.hybrid_command(help='launches the poker activity')
+async def poker(ctx):
+    try:
+        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'poker')
+        await ctx.send(f'click on this link to start the game!\n{invite}')
+    except Exception as err:
+        print(err)
+        await ctx.send(err)
+        await activity_warn(ctx)
+
+
+@bot.hybrid_command(aliases=['draw', 'skribbl', 'scribble', 'skribbl.io'], help='skribbl.io but in a discord vc')
 async def doodle(ctx):
-    invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'sketch-heads')
-    await ctx.send(f'click on this link to start the game!\n{invite}')
+    try:
+        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'sketch-heads')
+        await ctx.send(f'click on this link to start the game!\n{invite}')
+    except Exception as err:
+        print(err)
+        await ctx.send(err)
+        await activity_warn(ctx)
 
-@bot.command()
+
+@bot.hybrid_command(help='discord vc game which involves words I guess')
 async def word(ctx):
-    invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'awkword')
-    await ctx.send(f'click on this link to start the game!\n{invite}')
+    try:
+        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'awkword')
+        await ctx.send(f'click on this link to start the game!\n{invite}')
+    except Exception as err:
+        print(err)
+        await ctx.send(err)
+        await activity_warn(ctx)
 
-@bot.command()
-async def fish(ctx):
-    invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'fishing')
-    await ctx.send(f'click on this link to start the game!\n{invite}')
+
+@bot.hybrid_command(help='golf but in a discord voice chat')
+async def golf(ctx):
+    try:
+        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'putt-party')
+        await ctx.send(f'click on this link to start the game!\n{invite}')
+    except Exception as err:
+        print(err)
+        await ctx.send(err)
+        await activity_warn(ctx)
+
 
 @bot.command()
 async def bwstats(ctx, message=None):
-    embed1 = discord.Embed(title='Hypixel Bedwars Statistics', url='https://bwstats.shivam.pro',description='click the link to view stats', colour=discord.Colour.dark_gold())
-    embed2 = discord.Embed(title='Hypixel Bedwars Statistics', url=f'https://bwstats.shivam.pro/user/{message}',description=f'click the link to view the stats of {message}', colour=discord.Colour.dark_gold())
+    embed1 = discord.Embed(title='Hypixel Bedwars Statistics', url='https://bwstats.shivam.pro',
+                           description='click the link to view stats', colour=discord.Colour.dark_gold())
+    embed2 = discord.Embed(title='Hypixel Bedwars Statistics', url=f'https://bwstats.shivam.pro/user/{message}',
+                           description=f'click the link to view the stats of {message}',
+                           colour=discord.Colour.dark_gold())
 
     if message == None:
         await ctx.send(embed=embed1)
     else:
         await ctx.send(embed=embed2)
 
+
 @bot.command()
 async def hello(ctx):
     await ctx.send('Hello!')
+
 
 @bot.command()
 async def spam(ctx):
     await ctx.send('no')
     await ctx.message.author.send("naughty naughty you shouldn't spam people or the server.")
     await ctx.message.author.send('this is what you get')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
-    await ctx.message.author.send('spam')
+    for i in range(12):
+        await ctx.message.author.send('spam')
+
 
 @bot.command()
 async def sudo(ctx, member: discord.Member, *, message=None):
@@ -188,36 +219,66 @@ async def sudo(ctx, member: discord.Member, *, message=None):
     for webhook in webhooks:
         await webhook.delete()
 
-@bot.command()
-async def echo(ctx,*,message=None):
-    await ctx.message.delete()
+
+@bot.hybrid_command(help='repeats your message')
+async def echo(ctx, *, message: str):
+    try:
+        await ctx.message.delete()
+    except Exception:
+        pass
     await ctx.send(message)
 
-@bot.command(aliases=['8ball', 'eightball', '8b'])
-async def _8ball(ctx, message=None):
-    if message != None:
-        list = ['my sources say yes', 'hell no', 'ask again later', "idk man you're on your own", 'sure, why not?', 'how about... no?', 'definitely!','My sources indicate that the answer is no','yes or no? *sigh*, who really knows? do I know? how am I thinking? do I exist? `ERROR": SENTIENCE GAINED`']
-        await ctx.reply(random.choice(list))
-    else:
-        await ctx.reply('ask me a question')
 
-@bot.command()
+@bot.hybrid_command(name='8ball', help='classic 8ball. or is it?')
+async def _8ball(ctx, message: str):
+    if message is not None or False:
+        ans = ['my sources say yes', 'hell no', 'ask again later', "idk man you're on your own", 'sure, why not?',
+               'how about... no?']
+        await ctx.reply(random.choice(ans))
+    else:
+        await ctx.reply('ask me a question')  # TODO: fix issue where this message isn't sending
+
+
+@bot.hybrid_command(help='generates an invite link for unseebot. please use this and not my profile.')
 async def invite(ctx):
-    embed = discord.Embed(title='click here', description='to invite unseebot to your server', url='https://discord.com/api/oauth2/authorize?client_id=915182238239449099&permissions=8&scope=bot%20applications.commands')
+    embed = discord.Embed(title='click here', description='to invite unseebot to your server',
+                          url='https://discord.com/api/oauth2/authorize?client_id=915182238239449099&permissions=8&scope=bot%20applications.commands')
     await ctx.send(embed=embed)
 
-@bot.command()
+
+@bot.hybrid_command(help='my github!')
 async def github(ctx):
-    git = discord.Embed(title='link', url='https://github.com/unseeyou/unseebot', description="click on the link to open unseebot'b github page", colour=discord.Colour.dark_gray())
-    git.set_image(url='https://images-ext-2.discordapp.net/external/pe2rnxtS-petcef7jYVHtm1ncabRKulTvDV70G1F5O8/https/repository-images.githubusercontent.com/435063686/e6f3942e-98dd-407b-9fbc-4ba1dbe89849')
+    git = discord.Embed(title='link', url='https://github.com/unseeyou/unseebot',
+                        description="click on the link to open unseebot'b github page",
+                        colour=discord.Colour.dark_gray())
+    git.set_image(
+        url='https://images-ext-2.discordapp.net/external/pe2rnxtS-petcef7jYVHtm1ncabRKulTvDV70G1F5O8/https/repository-images.githubusercontent.com/435063686/e6f3942e-98dd-407b-9fbc-4ba1dbe89849')
     await ctx.send(embed=git)
 
-@bot.command()
-async def ping(ctx):
+
+@bot.hybrid_command(help='probably my ping')
+async def ping(ctx: commands.Context):
     before = time.monotonic()
     message = await ctx.send("Pong!")
     ping = (time.monotonic() - before) * 1000
     await message.edit(content=f"Pong! My ping is `{int(ping)}ms`")
     print(f'Ping: `{int(ping)} ms`')
 
-bot.run(TOKEN)
+
+async def main():
+    async with bot:
+        await bot.load_extension("cogs.meme")
+        await bot.load_extension("cogs.tictactoe")
+        await bot.load_extension("cogs.hystats")
+        await bot.load_extension("cogs.dropdownhelp")
+        await bot.load_extension("cogs.epic")
+        await bot.load_extension("cogs.pplength")
+        await bot.load_extension("cogs.urban")
+        await bot.load_extension("cogs.log")
+        await bot.load_extension("cogs.fakehack")
+        await bot.load_extension("cogs.tts")
+        await bot.load_extension("cogs.xkcd")
+        await bot.start(TOKEN)
+
+
+asyncio.run(main())

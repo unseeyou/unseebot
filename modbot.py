@@ -1,28 +1,32 @@
 import discord
-from discord import utils
 from discord.ext.commands import has_permissions
 from discord.ext import commands
 from discord.ui import Button, View
 import os
+import asyncio
 import time
 from dotenv import load_dotenv
 
 load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
-bot = commands.Bot(command_prefix=[';','//','unseeyou '], case_insensitive=True, intents=intents)
+intents.message_content = True
+bot = commands.Bot(command_prefix=[';', '//'], case_insensitive=True, intents=intents)
 TOKEN = os.getenv('MODBOT_TOKEN')
+
 
 @bot.event
 async def on_ready():
     print('MODERATION BOT ONLINE')
 
+
 @bot.command(aliases=['bc'], help='still working on it')
 @has_permissions(administrator=True)
-async def broadcast(ctx,*,message=None):
+async def broadcast(ctx, *, message=None):
     channels = ctx.guild.text_channels
     for channel in channels:
         await channel.send(f'**Server Broadcast:** {message}')
+
 
 @bot.command(help='run this if mute role isnt working')
 @has_permissions(administrator=True)
@@ -31,9 +35,10 @@ async def setupmute(ctx):
     mutedRole = discord.utils.get(ctx.guild.roles, name="muted")
     for channel in ctx.guild.text_channels:
         await channel.set_permissions(mutedRole, send_messages=False)
-    embed = discord.Embed(title='COMPLETED!', colour= discord.Colour.green())
+    embed = discord.Embed(title='COMPLETED!', colour=discord.Colour.green())
     await msg.delete()
     await ctx.reply(embed=embed)
+
 
 @bot.command(help='usage: `sudo @mention {message}`')
 @has_permissions(administrator=True)
@@ -51,6 +56,7 @@ async def sudo(ctx, member: discord.Member, *, message=None):
     for webhook in webhooks:
         await webhook.delete()
 
+
 @bot.command(help='usage: `;ping`, gets the current ping of bot')
 async def ping(ctx):
     before = time.monotonic()
@@ -59,18 +65,20 @@ async def ping(ctx):
     await message.edit(content=f"Pong! My ping is `{int(ping)}ms`")
     print(f'Ping: {int(ping)} ms')
 
-@bot.command(pass_context=True,nick='usage: `;id`, gets the server/guild ID')
+
+@bot.command(pass_context=True, nick='usage: `;id`, gets the server/guild ID')
 @has_permissions(administrator=True)
 async def id(ctx):
     id = ctx.message.guild.id
     await ctx.send(id)
 
-@bot.command(name='clear', aliases=['purge', 'delete', 'del'],help='usage: `;clear {quantity}`') # clear command
+
+@bot.command(name='clear', aliases=['purge', 'delete', 'del'], help='usage: `;clear {quantity}`')  # clear command
 @commands.has_permissions(administrator=True)
-async def clear(ctx, quantity:int):
+async def clear(ctx, quantity: int):
     await ctx.send(f"clearing {quantity} messages")
     channel = ctx.channel
-    await channel.purge(limit=int(quantity)+2) # clears command usage as well as amount of messages
+    await channel.purge(limit=int(quantity) + 2)  # clears command usage as well as amount of messages
     time.sleep(0.2)
     msg = await ctx.send(f"cleared {quantity} messages!")
     msg2 = await ctx.send("just a reminder that this bot cannot delete messages more then 2 weeks old")
@@ -78,9 +86,10 @@ async def clear(ctx, quantity:int):
     await msg.delete()
     await msg2.delete()
 
+
 @bot.command(help='totally not sus')
 @has_permissions(administrator=True)
-async def role(ctx,user:discord.Member = None, role:discord.Role = None):
+async def role(ctx, user: discord.Member = None, role: discord.Role = None):
     if user is None:
         user = ctx.message.author
     else:
@@ -88,17 +97,19 @@ async def role(ctx,user:discord.Member = None, role:discord.Role = None):
     role = discord.utils.get(ctx.guild.roles, name=role.name)
     await user.add_roles(role)
 
+
 @bot.command(help='totally not sussy!!!')
 @has_permissions(administrator=True)
-async def roleall(ctx, role:discord.Role):
+async def roleall(ctx, role: discord.Role):
     role = discord.utils.get(ctx.guild.roles, name=role.name)
     users = ctx.guild.members
     for user in users:
         await user.add_roles(role)
 
+
 @bot.command(help='the ultimate undo')
 @has_permissions(administrator=True)
-async def undoroleall(ctx, role:discord.Role):
+async def undoroleall(ctx, role: discord.Role):
     role = discord.utils.get(ctx.guild.roles, name=role.name)
     users = ctx.guild.members
     for user in users:
@@ -107,35 +118,40 @@ async def undoroleall(ctx, role:discord.Role):
         else:
             await user.remove_roles(role)
 
-@bot.command(aliases=['rr'],help='trololol')
+
+@bot.command(aliases=['rr'], help='trololol')
 @has_permissions(administrator=True)
-async def removerole(ctx,role:discord.Role,user:discord.Member = None):
+async def removerole(ctx, role: discord.Role, user: discord.Member = None):
     if user is None:
         user = ctx.message.author
     else:
         pass
     await user.remove_roles(role)
 
-@bot.command(help='locks down a channel, only admins can talk and unlock it',aliases=['lock','ld'])
+
+@bot.command(help='locks down a channel, only admins can talk and unlock it', aliases=['lock', 'ld'])
 @has_permissions(administrator=True)
 async def lockdown(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
     await ctx.send(ctx.channel.mention + " ***is now in lockdown.***")
 
-@bot.command(help ='unlocks a channel',aliases=['unlockdown','uld','ul'])
+
+@bot.command(help='unlocks a channel', aliases=['unlockdown', 'uld', 'ul'])
 @has_permissions(administrator=True)
 async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
     await ctx.send(ctx.channel.mention + " ***has been unlocked.***")
 
+
 @bot.command(help='changes all the nicknames')
 @has_permissions(administrator=True)
-async def nickall(ctx,*,nick=None):
+async def nickall(ctx, *, nick=None):
     for user in ctx.guild.members:
         try:
             await user.edit(nick=nick)
         except discord.Forbidden:
             pass
+
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -145,24 +161,27 @@ async def on_command_error(ctx, error):
         print(error)
         await ctx.send(error)
 
-@bot.command(help = 'B I G   R E D   B U T T O N')
+
+@bot.command(help='B I G   R E D   B U T T O N')
 async def button(ctx):
     view = View()
-    embed = discord.Embed(title='USE WITH CAUTION',colour=discord.Colour.red())
+    embed = discord.Embed(title='USE WITH CAUTION', colour=discord.Colour.red())
 
     async def callback(interaction):
         if ctx.message.author.id == 650923352097292299:
             await interaction.response.send_message('__**SERVER WILL GO BOOM BOOM IN 30 SECONDS**__')
         else:
             await interaction.response.send_message('`Error 69420: you are not unseeyou`', ephemeral=True)
+
     button = Button(label='DANGER', style=discord.ButtonStyle.danger)
     button.callback = callback
     view.add_item(button)
     await ctx.send(embed=embed, view=view)
 
+
 @bot.command()
 @has_permissions(administrator=True)
-async def disguise(ctx,member: discord.Member=None):
+async def disguise(ctx, member: discord.Member = None):
     def get_msg(msg):
         if msg.author.id == ctx.message.author.id:
             return msg.content
@@ -190,9 +209,10 @@ async def disguise(ctx,member: discord.Member=None):
         for webhook in webhooks:
             await webhook.delete()
 
+
 @bot.command(help='makes an admin role with custom name')
 @has_permissions(administrator=True)
-async def createadmin(ctx, *,role_name = None):
+async def createadmin(ctx, *, role_name=None):
     if role_name is None:
         role_name = 'ඞ'
         await ctx.send(role_name)
@@ -200,9 +220,12 @@ async def createadmin(ctx, *,role_name = None):
         pass
     guild = ctx.guild
     perms = discord.Permissions(administrator=True)
-    msg = await ctx.send(embed=discord.Embed(title=f'CREATING ADMIN ROLE WITH NAME: @{role_name}', colour=discord.Colour.dark_blue()).set_footer(text='made by unseeyou'))
+    msg = await ctx.send(embed=discord.Embed(title=f'CREATING ADMIN ROLE WITH NAME: @{role_name}',
+                                             colour=discord.Colour.dark_blue()).set_footer(text='made by unseeyou'))
     await guild.create_role(name=role_name, permissions=perms)
-    await msg.edit(embed=discord.Embed(title=f'SUCCESS!', colour=discord.Colour.green()).set_footer(text='made by unseeyou'))
+    await msg.edit(
+        embed=discord.Embed(title=f'SUCCESS!', colour=discord.Colour.green()).set_footer(text='made by unseeyou'))
+
 
 @bot.command(help='mute someone!')
 @has_permissions(administrator=True)
@@ -217,6 +240,7 @@ async def mute(ctx, user: discord.Member = None, *, reason=None):
         await user.send(embed=embed)
         await ctx.send(embed=embed)
 
+
 @bot.command(help='unmute someone!')
 @has_permissions(administrator=True)
 async def unmute(ctx, user: discord.Member = None, *, reason=None):
@@ -230,4 +254,10 @@ async def unmute(ctx, user: discord.Member = None, *, reason=None):
         await user.send(embed=embed)
         await ctx.send(embed=embed)
 
-bot.run(TOKEN)
+
+async def main():
+    async with bot:
+        await bot.start(TOKEN)
+
+
+asyncio.run(main())
