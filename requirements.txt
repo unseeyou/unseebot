@@ -1,4 +1,4 @@
-discord.py 2.0.0a3575+g45d498c
+discord.py latest version
 aiohttp any version
 discord-together 1.2.2
 python-dotenv any version
