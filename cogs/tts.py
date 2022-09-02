@@ -1,13 +1,13 @@
 import discord
 import uuid
 import os
-import ffmpeg
 from gtts import gTTS
 from discord.ext import commands
 
+
 class TTSCommands(commands.Cog):
-    @commands.command()
-    async def tts(self, ctx, *, msg=None):
+    @commands.hybrid_command(help='sends a tts message into your current vc')
+    async def tts(self, ctx, *, msg: str = None):
         if msg is not None:
             name = uuid.uuid4()
             try:
@@ -39,5 +39,6 @@ class TTSCommands(commands.Cog):
         else:
             await ctx.send('Error: no message provided')
 
-def setup(bot):
-    bot.add_cog(TTSCommands(bot))
+
+async def setup(bot):
+    await bot.add_cog(TTSCommands(bot))

@@ -2,9 +2,9 @@ import random
 import discord
 from discord.ext import commands
 
-class commands(commands.Cog):
-    @commands.command()
-    async def pp(self,ctx,*,msg):
+class commandsE(commands.Cog):
+    @commands.hybrid_command(help='how long is pp?')
+    async def pp(self, ctx, *, msg: str):
         balls = '8'
         tip = 'D'
         mid = '='
@@ -14,5 +14,6 @@ class commands(commands.Cog):
         embed.set_footer(text='😳')
         await ctx.send(embed=embed)
 
-def setup(bot):
-    bot.add_cog(commands(bot))
+
+async def setup(bot):
+    await bot.add_cog(commandsE(bot))

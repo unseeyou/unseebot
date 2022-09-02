@@ -21,8 +21,8 @@ def create_embed(t, i, u, d):
 
 
 class XKCD(commands.Cog):
-    @commands.command(aliases=["comic"])
-    async def xkcd(self, ctx, number=None):
+    @commands.hybrid_command(aliases=["comic"], help='gets a comic from xkcd')
+    async def xkcd(self, ctx, number: str = None):
         try:
             if number is None:
                 request = requests.get("https://xkcd.com/info.0.json")
@@ -68,5 +68,5 @@ class XKCD(commands.Cog):
             print(err)
 
 
-def setup(bot):
-    bot.add_cog(XKCD(bot))
+async def setup(bot):
+    await bot.add_cog(XKCD(bot))

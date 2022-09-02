@@ -2,15 +2,16 @@ import discord
 from discord.ext import commands
 import random
 
+
 class Epicness(commands.Cog):
-    @commands.command(aliases=["howepic", "epicness"])
-    async def epic(self, ctx, *, message=None):
-        if message == None:
+    @commands.hybrid_command(aliases=["howepic", "epicness"], help='how epic are you?')
+    async def epic(self, ctx, *, message: str = None):
+        if message is None:
             await ctx.send('Who/What are you trying to measure?')
         else:
-            number = random.randint(-1,100)
+            number = random.randint(-1, 100)
             if number >= 75:
-                text = 'Damn... THATS **EPIC**'
+                text = 'Damn... THATS EPIC'
                 image = 'https://i.imgflip.com/66u3xe.jpg'
             elif 75 > number >= 50:
                 text = 'That is pretty epic'
@@ -24,5 +25,6 @@ class Epicness(commands.Cog):
             embed1.set_image(url=image)
             await ctx.send(embed=embed1)
 
-def setup(bot):
-    bot.add_cog(Epicness(bot))
+
+async def setup(bot):
+    await bot.add_cog(Epicness(bot))

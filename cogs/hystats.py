@@ -11,26 +11,30 @@ import datetime
 load_dotenv()
 TOKEN = os.getenv("HYPIXEL_API")
 
+
 async def request_stats(name):
     async with aiohttp.ClientSession() as session:
         request = await session.get(f'https://api.hypixel.net/player?name={name}&key={TOKEN}')
         json = await request.json()
     if json["success"] is not False and json["player"] is not None:
-        cache_stats(name, json) # only saves data if there is no error code
+        cache_stats(name, json)  # only saves data if there is no error code
     return json
 
-def cache_stats(playername,stats):
+
+def cache_stats(playername, stats):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
-    with open(f'cogs/{folder}/{filename}','w') as file:
-        file.write(json.dumps(stats)) # saves each player's data in their own file
+    with open(f'cogs/{folder}/{filename}', 'w') as file:
+        file.write(json.dumps(stats))  # saves each player's data in their own file
     return filename
+
 
 def get_cache_data(playername):
     filename = f'{playername.lower()}-stats.txt'
     folder = 'hystats-data'
-    with open(f'cogs/{folder}/{filename}','r') as file:
-        return json.load(file) # opens player's data file and gets the json inside
+    with open(f'cogs/{folder}/{filename}', 'r') as file:
+        return json.load(file)  # opens player's data file and gets the json inside
+
 
 def delete_old_data():
     try:
@@ -48,8 +52,9 @@ def delete_old_data():
 
     return True
 
+
 def create_embed(data):
-    json = data # creates embed
+    json = data  # creates embed
     try:
         playerdata = json["player"]
     except BaseException:
@@ -120,11 +125,11 @@ def create_embed(data):
     uuid = playerdata["uuid"]
     player = json["player"]
     try:
-        lastlog = datetime.datetime.fromtimestamp(int(player["lastLogin"]/1000)).strftime("%d/%m/%Y %H:%M:%S")
+        lastlog = datetime.datetime.fromtimestamp(int(player["lastLogin"] / 1000)).strftime("%d/%m/%Y %H:%M:%S")
     except Exception as err:
         lastlog = str(err)
     try:
-        firstLog = datetime.datetime.fromtimestamp(int(player["firstLogin"]/1000)).strftime("%d/%m/%Y %H:%M:%S")
+        firstLog = datetime.datetime.fromtimestamp(int(player["firstLogin"] / 1000)).strftime("%d/%m/%Y %H:%M:%S")
     except Exception as err:
         firstLog = str(err)
     try:
@@ -153,14 +158,14 @@ def create_embed(data):
                     inline=False)
     embed.add_field(name="Skywars Stats",
                     value=f'Games Played: {skywars_games}, Games Won: {skywars_wins}, Souls: {souls}')
-    embed.set_image(url=f'http://crafatar.com/renders/body/{str(uuid)}.jpg?overlay')
+    embed.set_image(url=f'https://crafthead.net/armor/bust/{uuid}')
     return embed
 
 
 class stats(commands.Cog):
-    @commands.command()
-    async def hystats(self, ctx, msg=None):
-        json = await request_stats(msg)
+    @commands.hybrid_command(help='hypixel stats! very cool.')
+    async def hystats(self, ctx, username: str = None):
+        json = await request_stats(username)
         if json["success"] and json["player"] is not None:
             try:
                 embed = create_embed(json)
@@ -171,7 +176,7 @@ class stats(commands.Cog):
 
         elif not json["success"] and "recently" in json["cause"]:
             try:
-                embed = create_embed(get_cache_data(msg))
+                embed = create_embed(get_cache_data(username))
                 await ctx.send(embed=embed)
             except BaseException as error:
                 await ctx.send(f'Exception from cache: {error}')
@@ -184,5 +189,6 @@ class stats(commands.Cog):
 
         delete_old_data()
 
-def setup(bot):
-    bot.add_cog(stats(bot))
+
+async def setup(bot):
+    await bot.add_cog(stats(bot))

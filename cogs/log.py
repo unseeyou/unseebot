@@ -1,12 +1,25 @@
 from discord.ext import commands
 
+
+def clean(text):
+    return ''.join(ch for ch in text if ch.isalnum())
+
+
 class Cog(commands.Cog):
+
+
+
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.content.startswith('>'):
-            print(f"{message.guild}/{message.channel}/{message.author.name}:{message.content}")
+        if message.content.startswith('>'):  # TODO: log into log.txt
+            logline = f"{clean(message.guild)}/{clean(message.channel)}/{clean(message.author.name)}:{clean(message.content)}/{clean(message.content)}"
+            print(logline)
             if message.embeds:
-                print(message.embeds[0].to_dict())
+                line2 = message.embeds[0].to_dict()
+                logfile.write(line2)
 
-def setup(bot):
-    bot.add_cog(Cog(bot))
+            logfile.close()
+
+
+async def setup(bot):
+    await bot.add_cog(Cog(bot))
