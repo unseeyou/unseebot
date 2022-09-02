@@ -3,3 +3,4 @@ aiohttp any version
 discord-together 1.2.2
 python-dotenv any version
 PyNaCl any version
+asyncio current version
