@@ -17,7 +17,18 @@ TOKEN = os.getenv('MODBOT_TOKEN')
 
 @bot.event
 async def on_ready():
+    print('loading slash commands')
+    await bot.tree.sync()
     print('MODERATION BOT ONLINE')
+
+
+@bot.event
+async def on_member_join(member):
+    try:
+        r = discord.utils.get(member.guild.roles, name='member')
+        await member.add_roles(r)
+    except Exception:
+        pass
 
 
 @bot.command(aliases=['bc'], help='still working on it')
@@ -28,7 +39,7 @@ async def broadcast(ctx, *, message=None):
         await channel.send(f'**Server Broadcast:** {message}')
 
 
-@bot.command(help='run this if mute role isnt working')
+@bot.hybrid_command(help='run this if mute role isnt working')
 @has_permissions(administrator=True)
 async def setupmute(ctx):
     msg = await ctx.send('`this may take a while if you have lots of text channels...`')
@@ -42,7 +53,7 @@ async def setupmute(ctx):
 
 @bot.command(help='usage: `sudo @mention {message}`')
 @has_permissions(administrator=True)
-async def sudo(ctx, member: discord.Member, *, message=None):
+async def sudo(ctx, member: discord.Member, *, message: str = None):
     await ctx.message.delete()
     if message is None:
         await ctx.send(f'SyntaxError: a person and message must be specified')
@@ -57,7 +68,7 @@ async def sudo(ctx, member: discord.Member, *, message=None):
         await webhook.delete()
 
 
-@bot.command(help='usage: `;ping`, gets the current ping of bot')
+@bot.hybrid_command(help='usage: `;ping`, gets the current ping of bot')
 async def ping(ctx):
     before = time.monotonic()
     message = await ctx.send("Pong!")
@@ -66,7 +77,7 @@ async def ping(ctx):
     print(f'Ping: {int(ping)} ms')
 
 
-@bot.command(pass_context=True, nick='usage: `;id`, gets the server/guild ID')
+@bot.hybrid_command(pass_context=True, nick='usage: `;id`, gets the server/guild ID')
 @has_permissions(administrator=True)
 async def id(ctx):
     id = ctx.message.guild.id
@@ -87,7 +98,7 @@ async def clear(ctx, quantity: int):
     await msg2.delete()
 
 
-@bot.command(help='totally not sus')
+@bot.hybrid_command(help='gives a role', aliases=['giverole'])
 @has_permissions(administrator=True)
 async def role(ctx, user: discord.Member = None, role: discord.Role = None):
     if user is None:
@@ -119,7 +130,7 @@ async def undoroleall(ctx, role: discord.Role):
             await user.remove_roles(role)
 
 
-@bot.command(aliases=['rr'], help='trololol')
+@bot.hybrid_command(aliases=['rr'], help='trololol')
 @has_permissions(administrator=True)
 async def removerole(ctx, role: discord.Role, user: discord.Member = None):
     if user is None:
@@ -129,14 +140,14 @@ async def removerole(ctx, role: discord.Role, user: discord.Member = None):
     await user.remove_roles(role)
 
 
-@bot.command(help='locks down a channel, only admins can talk and unlock it', aliases=['lock', 'ld'])
+@bot.hybrid_command(help='locks down a channel, only admins can talk and unlock it', aliases=['lock', 'ld'])
 @has_permissions(administrator=True)
 async def lockdown(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
     await ctx.send(ctx.channel.mention + " ***is now in lockdown.***")
 
 
-@bot.command(help='unlocks a channel', aliases=['unlockdown', 'uld', 'ul'])
+@bot.hybrid_command(help='unlocks a channel', aliases=['unlockdown', 'uld', 'ul'])
 @has_permissions(administrator=True)
 async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
@@ -227,7 +238,7 @@ async def createadmin(ctx, *, role_name=None):
         embed=discord.Embed(title=f'SUCCESS!', colour=discord.Colour.green()).set_footer(text='made by unseeyou'))
 
 
-@bot.command(help='mute someone!')
+@bot.hybrid_command(help='mute someone!')
 @has_permissions(administrator=True)
 async def mute(ctx, user: discord.Member = None, *, reason=None):
     if user is None:
@@ -241,7 +252,7 @@ async def mute(ctx, user: discord.Member = None, *, reason=None):
         await ctx.send(embed=embed)
 
 
-@bot.command(help='unmute someone!')
+@bot.hybrid_command(help='unmute someone!')
 @has_permissions(administrator=True)
 async def unmute(ctx, user: discord.Member = None, *, reason=None):
     if user is None:
