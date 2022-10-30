@@ -278,6 +278,7 @@ async def main():
         await bot.load_extension("cogs.fakehack")
         await bot.load_extension("cogs.tts")
         await bot.load_extension("cogs.xkcd")
+        await bot.load_extension("cogs.poll")
         await bot.start(TOKEN)
 
 
