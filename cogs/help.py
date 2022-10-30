@@ -96,6 +96,11 @@ class Commands(commands.Cog):
     @commands.hybrid_command(help='literally the help command')
     async def help(self, ctx):
         await ctx.send(embed=embed, view=SelectView())
+        
+    @commands.hybrid_command(help='a link to the official support/community server')
+    async def server(self, ctx):
+        await ctx.send(
+            'feel free to join the official support/community server for unseebot! https://discord.gg/88xXpFwMRD')
 
 
 async def setup(bot):
