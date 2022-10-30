@@ -71,8 +71,8 @@ class Select(discord.ui.Select):
     embed5.add_field(name='triggered', value='usage: `>triggered {optional username}`', inline=False)
     embed5.add_field(name='tts', value='`usage: >tts {msg}`', inline=False)
     embed5.add_field(name='comic | xkcd', value='`usage: >xkcd {OPTIONAL COMIC NUMBER}`', inline=False)
-    embed5.add_field(name='createpoll', value='usage: >createpoll {title} {description} {options seperated with `;`}')
-    embed5.add_field(name='server', value='usage: >server')
+    embed5.add_field(name='createpoll', value='`usage: >createpoll {title} {description} {options seperated with `;`}`', inline=False)
+    embed5.add_field(name='server', value='`usage: >server`', inline=False)
     embed5.set_footer(text='page 4 of 5')
 
     async def callback(self, interaction):
