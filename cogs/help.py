@@ -59,9 +59,9 @@ class Select(discord.ui.Select):
                      inline=False)
     embed4.add_field(name='Thank You for using unseebot', value='<3')
     embed4.add_field(name='Any Ideas?',
-                     value='Please DM unseeyou#2912 if you have any ideas you want to add to unseebot')
+                     value='Please DM unseeyou#2912 if you have any ideas you want to add to unseebot, or head over to [https://discord.gg/88xXpFwMRD]')
     embed4.add_field(name='Update Announcements',
-                     value='It is recommended that you follow the dev annoucements channel in this server (https://discord.gg/qShcaXXhaj) to get updates on unseebot development and upcoming features',
+                     value='It is recommended that you follow the annoucements channel in the official server (https://discord.gg/88xXpFwMRD) to get updates on unseebot development and upcoming features',
                      inline=False)
     embed4.set_footer(text='page 5 of 5')
 
@@ -71,6 +71,8 @@ class Select(discord.ui.Select):
     embed5.add_field(name='triggered', value='usage: `>triggered {optional username}`', inline=False)
     embed5.add_field(name='tts', value='`usage: >tts {msg}`', inline=False)
     embed5.add_field(name='comic | xkcd', value='`usage: >xkcd {OPTIONAL COMIC NUMBER}`', inline=False)
+    embed5.add_field(name='createpoll', value='usage: >createpoll {title} {description} {options seperated with `;`}')
+    embed5.add_field(name='server', value='usage: >server')
     embed5.set_footer(text='page 4 of 5')
 
     async def callback(self, interaction):
@@ -96,7 +98,7 @@ class Commands(commands.Cog):
     @commands.hybrid_command(help='literally the help command')
     async def help(self, ctx):
         await ctx.send(embed=embed, view=SelectView())
-        
+
     @commands.hybrid_command(help='a link to the official support/community server')
     async def server(self, ctx):
         await ctx.send(
