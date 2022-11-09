@@ -4,6 +4,7 @@ this is just an extra bot with moderation tools
 # unseebot
 feel free to reuse this code and/or improve on it!
 please make sure you have `ffmpeg.exe` in the same directory as `main.py`
+join the official discord server: https://discord.gg/88xXpFwMRD
 
 HOW TO USE BOT:
 1. install the packages from requirements.txt
