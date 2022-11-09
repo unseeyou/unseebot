@@ -1,3 +1,5 @@
+__author__ = 'unseeyou'
+
 import random
 import os
 import io
@@ -270,7 +272,7 @@ async def main():
         await bot.load_extension("cogs.meme")
         await bot.load_extension("cogs.tictactoe")
         await bot.load_extension("cogs.hystats")
-        await bot.load_extension("cogs.dropdownhelp")
+        await bot.load_extension("cogs.help")
         await bot.load_extension("cogs.epic")
         await bot.load_extension("cogs.pplength")
         await bot.load_extension("cogs.urban")
@@ -279,6 +281,7 @@ async def main():
         await bot.load_extension("cogs.tts")
         await bot.load_extension("cogs.xkcd")
         await bot.load_extension("cogs.poll")
+        await bot.load_extension("cogs.music")
         await bot.start(TOKEN)
 
 

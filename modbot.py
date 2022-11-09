@@ -8,6 +8,9 @@ import time
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# helpcommand = commands.HelpCommand.
+
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
@@ -264,6 +267,25 @@ async def unmute(ctx, user: discord.Member = None, *, reason=None):
         await user.remove_roles(mutedRole)
         await user.send(embed=embed)
         await ctx.send(embed=embed)
+
+
+@bot.hybrid_command(name='ban', help='bans a user')
+@commands.has_permissions(ban_members=True)
+async def ban(ctx, member: discord.Member = None, *, reason=None):
+    if member is None:
+        author = ctx.author
+        embed2 = discord.Embed(title='', description=f'{author}, you must mention a valid user')
+        await ctx.send(embed2=embed2)
+    else:
+        embed = discord.Embed(title=f"{member.name} has been banned")
+        embed.add_field(name=f"Reason", value=f"{reason}")
+        try:
+            await member.ban(reason=reason, delete_message_days=0)
+        except BaseException as err:
+            print(err)
+        await ctx.send(embed=embed)
+        chnl = discord.utils.get(ctx.guild.channels, name='logs')
+        await chnl.send(embed=embed)
 
 
 async def main():
