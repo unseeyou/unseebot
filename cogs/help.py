@@ -73,6 +73,8 @@ class Select(discord.ui.Select):
     embed5.add_field(name='comic | xkcd', value='`usage: >xkcd {OPTIONAL COMIC NUMBER}`', inline=False)
     embed5.add_field(name='createpoll', value='`usage: >createpoll {title} {description} {options seperated with `;`}`', inline=False)
     embed5.add_field(name='server', value='`usage: >server`', inline=False)
+    embed5.add_field(name='play', value='`usage: >play {url}`', inline=False)
+    embed5.add_field(name='leave | join', value='`usage: >leave | >join`', inline=False)
     embed5.set_footer(text='page 4 of 5')
 
     async def callback(self, interaction):
