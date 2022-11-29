@@ -34,6 +34,8 @@ async def on_ready():
         print(e)
     await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
     print("If you are seeing this then unseeyou's epic bot is working!")
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print('------')
 
 
 @bot.event

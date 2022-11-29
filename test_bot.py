@@ -31,6 +31,8 @@ async def on_ready():
     print(splash_text)
     await bot.tree.sync(guild=None)
     await bot.change_presence(activity=discord.Game('With your mind - t!help'), status=discord.Status.online)
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print('------')
 
 
 @bot.event
@@ -271,6 +273,7 @@ async def ping(ctx):
 
 async def main():
     async with bot:
+        # first load the general cogs
         await bot.load_extension("cogs.meme")
         await bot.load_extension("cogs.tictactoe")
         await bot.load_extension("cogs.hystats")
@@ -284,6 +287,10 @@ async def main():
         await bot.load_extension("cogs.xkcd")
         await bot.load_extension("cogs.poll")
         await bot.load_extension("cogs.music")
+
+        # now load the utils
+        await bot.load_extension("utils.controls")
+
         await bot.start(TOKEN)
 
 

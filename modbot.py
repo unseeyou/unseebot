@@ -23,6 +23,8 @@ async def on_ready():
     print('loading slash commands')
     await bot.tree.sync()
     print('MODERATION BOT ONLINE')
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print('------')
 
 
 @bot.event
