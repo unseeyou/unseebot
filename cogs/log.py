@@ -1,4 +1,5 @@
 from discord.ext import commands
+import discord
 
 
 def clean(text):
@@ -7,11 +8,10 @@ def clean(text):
 
 class Cog(commands.Cog):
 
-
-
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.content.startswith('>'):  # TODO: log into log.txt
+            logfile = open('log.txt', 'w+')
             logline = f"{clean(message.guild)}/{clean(message.channel)}/{clean(message.author.name)}:{clean(message.content)}/{clean(message.content)}"
             print(logline)
             if message.embeds:
