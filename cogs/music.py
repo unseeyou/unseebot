@@ -106,7 +106,7 @@ class Music(commands.Cog):
 
         await ctx.send(embed=self.generate_embed(url))
 
-    @commands.command(name='leave', help='leaves the vc and stops playing audio')
+    @commands.command(help='leaves the vc and stops playing audio')
     async def stop(self, ctx):
         """Stops and disconnects the bot from voice"""
 
