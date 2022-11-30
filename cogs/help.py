@@ -74,7 +74,7 @@ class Select(discord.ui.Select):
     embed5.add_field(name='createpoll', value='`usage: >createpoll {title} {description} {options seperated with `;`}`', inline=False)
     embed5.add_field(name='server', value='`usage: >server`', inline=False)
     embed5.add_field(name='play', value='`usage: >play {url}`', inline=False)
-    embed5.add_field(name='leave | join', value='`usage: >leave | >join`', inline=False)
+    embed5.add_field(name='stop | join', value='`usage: >stop | >join`', inline=False)
     embed5.add_field(name='loadplay', value='`usage: >loadplay {url}`', inline=False)
     embed5.set_footer(text='page 4 of 5')
 

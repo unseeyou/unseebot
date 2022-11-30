@@ -1,4 +1,5 @@
 import asyncio
+import time
 import discord
 import youtube_dl
 from discord.ext import commands
@@ -22,18 +23,17 @@ ytdl_format_options = {
 }
 
 ffmpeg_options = {
-    'options': '-vn',
+    'options': '-vn',  # no video
 }
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
-    def __init__(self, source, *, data, volume=30):
+    def __init__(self, source, *, data, volume=15):
         super().__init__(source, volume)
 
         self.data = data
-
         self.title = data.get('title')
         self.url = data.get('url')
 
@@ -75,30 +75,37 @@ class Music(commands.Cog):
             return err
 
     @commands.hybrid_command(help='joins your vc')
-    async def join(self, ctx, *, channel: discord.VoiceChannel):
+    async def join(self, ctx, *, channel: discord.VoiceChannel = None):
         """Joins a voice channel"""
+        msg = await ctx.send('joining your vc')
 
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
 
-        await channel.connect()
+        if channel is not None:
+            await channel.connect()
+        elif channel is None:
+            channel = ctx.message.author.voice.channel
+            await channel.connect()
+
+        time.sleep(3)
+        await msg.delete()
 
     @commands.hybrid_command(help='loads the video first then plays it - less lag than play')
     async def loadplay(self, ctx, *, url: str):
         """Plays from an url (almost anything youtube_dl supports)"""
+        msg = await ctx.send('loading audio from url...')
 
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop)
             ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
 
-        await ctx.send(f'Now playing: {player.title}')
+        await ctx.send(embed=self.generate_embed(url))
+        await msg.delete()
 
     @commands.hybrid_command(help='plays the video as it loads - faster than loadplay')
     async def play(self, ctx, *, url: str):
         """Streams from an url (same as yt, but doesn't predownload)"""
-        if ctx.voice_client is None:
-            channel = ctx.message.author.voice.channel
-            await channel.connect()
 
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
@@ -109,8 +116,10 @@ class Music(commands.Cog):
     @commands.hybrid_command(help='leaves the vc and stops playing audio')
     async def stop(self, ctx):
         """Stops and disconnects the bot from voice"""
-
+        msg = await ctx.send('stopping audio and leaving voice channel')
         await ctx.voice_client.disconnect()
+        time.sleep(3)
+        await msg.delete()
 
     @play.before_invoke
     @loadplay.before_invoke
@@ -119,7 +128,7 @@ class Music(commands.Cog):
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect()
             else:
-                await ctx.send("You are not connected to a voice channel.")
+                await ctx.send("SkillIssue: You are not connected to a voice channel.")
                 raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
