@@ -36,6 +36,12 @@ async def on_member_join(member):
         pass
 
 
+@bot.event
+async def on_message(message):
+    if message.channel.name == 'github-updates':
+        await message.publish()
+    
+    
 @bot.command(aliases=['bc'], help='still working on it')
 @has_permissions(administrator=True)
 async def broadcast(ctx, *, message=None):
