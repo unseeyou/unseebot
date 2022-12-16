@@ -278,7 +278,7 @@ async def main():
         await bot.load_extension("cogs.epic")
         await bot.load_extension("cogs.pplength")
         await bot.load_extension("cogs.urban")
-        await bot.load_extension("cogs.log")
+        await bot.load_extension("utils.log")
         await bot.load_extension("cogs.fakehack")
         await bot.load_extension("cogs.tts")
         await bot.load_extension("cogs.xkcd")
