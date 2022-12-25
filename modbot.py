@@ -40,8 +40,8 @@ async def on_member_join(member):
 async def on_message(message):
     if message.channel.name == 'github-updates':
         await message.publish()
-    
-    
+
+
 @bot.command(aliases=['bc'], help='still working on it')
 @has_permissions(administrator=True)
 async def broadcast(ctx, *, message=None):
@@ -95,7 +95,7 @@ async def id(ctx):
     await ctx.send(id)
 
 
-@bot.command(name='clear', aliases=['purge', 'delete', 'del'], help='usage: `;clear {quantity}`')  # clear command
+@bot.hybrid_command(name='clear', aliases=['purge', 'delete', 'del'], help='usage: `;clear {quantity}`')  # clear command
 @commands.has_permissions(administrator=True)
 async def clear(ctx, quantity: int):
     await ctx.send(f"clearing {quantity} messages")
