@@ -133,7 +133,9 @@ def create_embed(data):
     except Exception as err:
         firstLog = str(err)
     try:
-        if "rank" in player:
+        if player["displayname"] == 'Technoblade':
+            rank = 'PIG+++'
+        elif "rank" in player:
             rank = player["rank"]
         elif 'monthlyPackageRank' in player and player['monthlyPackageRank'] == "SUPERSTAR":
             rank = 'MVP++'
@@ -158,13 +160,16 @@ def create_embed(data):
                     inline=False)
     embed.add_field(name="Skywars Stats",
                     value=f'Games Played: {skywars_games}, Games Won: {skywars_wins}, Souls: {souls}')
-    embed.set_image(url=f'https://crafthead.net/armor/bust/{uuid}')
+    if username == 'Technoblade':
+        embed.set_image(url='https://hypixel.net/attachments/image-26-png.3025155/')
+    else:
+        embed.set_image(url=f'https://crafthead.net/armor/bust/{uuid}')
     return embed
 
 
 class stats(commands.Cog):
     @commands.hybrid_command(help='hypixel stats! very cool.')
-    async def hystats(self, ctx, username: str = None):
+    async def hystats(self, ctx, username: str):
         json = await request_stats(username)
         if json["success"] and json["player"] is not None:
             try:
