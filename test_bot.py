@@ -32,6 +32,7 @@ async def on_ready():
     await bot.tree.sync(guild=None)
     await bot.change_presence(activity=discord.Game('With your mind - t!help'), status=discord.Status.online)
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print("https://discord.com/api/oauth2/authorize?client_id=925533570041278494&permissions=8&scope=applications.commands%20bot")
     print('------')
 
 
@@ -207,7 +208,7 @@ async def hello(ctx):
 @bot.command()
 async def sudo(ctx, member: discord.Member, *, message=None):
     await ctx.message.delete()
-    if message == None:
+    if message is None:
         await ctx.send(f'SyntaxError: a person and message must be specified')
         return
 
@@ -231,7 +232,8 @@ async def echo(ctx, *, message: str):
 
 @bot.hybrid_command(name='8ball')
 async def _8ball(ctx, message: str):
-    if message is not None or False:
+    if message:
+        # print(message)
         ans = ['my sources say yes', 'hell no', 'ask again later', "idk man you're on your own", 'sure, why not?',
                'how about... no?']
         await ctx.reply(random.choice(ans))
@@ -281,16 +283,17 @@ async def main():
         await bot.load_extension("cogs.epic")
         await bot.load_extension("cogs.pplength")
         await bot.load_extension("cogs.urban")
-        await bot.load_extension("cogs.log")
         await bot.load_extension("cogs.fakehack")
         await bot.load_extension("cogs.tts")
         await bot.load_extension("cogs.xkcd")
         await bot.load_extension("cogs.poll")
         await bot.load_extension("cogs.music")
+        await bot.load_extension("cogs.twitch")
 
         # now load the utils
+        await bot.load_extension("utils.log")
         await bot.load_extension("utils.controls")
-
+        # now start the bot
         await bot.start(TOKEN)
 
 

@@ -278,12 +278,14 @@ async def main():
         await bot.load_extension("cogs.epic")
         await bot.load_extension("cogs.pplength")
         await bot.load_extension("cogs.urban")
-        await bot.load_extension("utils.log")
         await bot.load_extension("cogs.fakehack")
         await bot.load_extension("cogs.tts")
         await bot.load_extension("cogs.xkcd")
         await bot.load_extension("cogs.poll")
         await bot.load_extension("cogs.music")
+        await bot.load_extension("cogs.twitch")
+
+        await bot.load_extension("utils.log")
         await bot.start(TOKEN)
 
 
