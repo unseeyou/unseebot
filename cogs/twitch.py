@@ -52,10 +52,10 @@ async def create_embed(result: dict, notif_channels: list):
                 if notif_msg in messages:
                     return False
                 else:
-                    await ctx.send(notif_msg)
+                    await ctx.send(notif_msg, embed=embed)
                     return True
             else:
-                await ctx.send(notif_msg)
+                await ctx.send(notif_msg, embed=embed)
                 return True
         except Exception as err:
             print("OOPSIES! {}".format(err))
