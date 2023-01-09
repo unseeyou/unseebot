@@ -1,7 +1,7 @@
 import discord
 import uuid
 import os
-from time import sleep
+from asyncio import sleep
 from gtts import gTTS
 from discord.ext import commands
 
@@ -11,7 +11,7 @@ class TTSCommands(commands.Cog):
     async def tts(self, ctx, *, msg: str = None):
         if msg is not None:
             m = await ctx.send('sending your msg!')
-            sleep(0.2)
+            await sleep(0.2)
             await m.delete()
             name = uuid.uuid4()
             try:
