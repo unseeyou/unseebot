@@ -163,13 +163,14 @@ def create_embed(data):
     if username == 'Technoblade':
         embed.set_image(url='https://hypixel.net/attachments/image-26-png.3025155/')
     else:
-        embed.set_image(url=f'https://crafthead.net/armor/bust/{uuid}')
+        embed.set_image(url=f'https://crafthead.net/armor/bust/{username.lower()}')
     return embed
 
 
 class stats(commands.Cog):
     @commands.hybrid_command(help='hypixel stats! very cool.')
     async def hystats(self, ctx, username: str):
+        await ctx.typing()
         json = await request_stats(username)
         if json["success"] and json["player"] is not None:
             try:
