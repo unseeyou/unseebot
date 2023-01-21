@@ -1,4 +1,21 @@
 {
-  "server/guild id": ["list", "of streamer usernames"],
-  "repeat": ["as many times as", "you want"]
+    "SERVER ID": {
+        "streamers": [
+            "streamer_names"
+        ],
+        "notif-channel": text channel ID,
+        "ping-role": role id,
+        "message": "message replacing the ping with [PING] and the username with [USER]"
+    },
+    "999540525336121344": {   //<-- example
+        "streamers": [
+            "lyr4t",
+            "sadkylo_",
+            "pinkhellfire",
+            "imprisond"
+        ],
+        "notif-channel": 1061774662213845053,
+        "ping-role": 1064437019163500606,
+        "message": "[PING] [USER] is live! Come say hi at https://twitch.tv/[USER]"
+    }
 }
