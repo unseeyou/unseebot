@@ -1,13 +1,13 @@
 {
     "SERVER ID": {
         "streamers": [
-            "streamer_names"
+            list of streamer_names
         ],
         "notif-channel": text channel ID,
         "ping-role": role id,
-        "message": "message replacing the ping with [PING] and the username with [USER]"
+        "message": message replacing the ping with [PING] and the username with [USER]
     },
-    "999540525336121344": {   //<-- example
+    "999540525336121344": {   <-- example here
         "streamers": [
             "lyr4t",
             "sadkylo_",
