@@ -113,7 +113,7 @@ class TwitchStuff(commands.Cog):
         print('waiting...')
         await self.bot.wait_until_ready()
 
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @app_commands.command(description="custom twitch notifications")
     @app_commands.describe(streamer_names="all the streamers you want notifications for seperated by commas",
                            notif_channel="the text channel the notificatoin will be sent to",
@@ -134,7 +134,7 @@ class TwitchStuff(commands.Cog):
         except BaseException as err:
             print(err)
 
-    @commands.has_permissions(administrator=True)
+    @app_commands.checks.has_permissions(administrator=True)
     @app_commands.command(description='clears the live notifications for current server')
     async def clear_live_notifications(self, ctx: discord.Interaction):
         await ctx.response.defer(ephemeral=True)
@@ -148,7 +148,7 @@ class TwitchStuff(commands.Cog):
                 json_file = json.dumps(json_file, indent=4)  # makes the json pretty (gives proper formatting)
                 write_file.write(str(json_file).replace("'", '"'))  # python uses "'"s in dicts
                 write_file.close()
-            await ctx.followup.send('Alert added! Try going live as a test if possible and create an issue on the support server if it does not work.')
+            await ctx.followup.send('Alerts removed! Please create a post in the forum of my help server if it did not work.')
         except BaseException as err:
             print(err)
 
