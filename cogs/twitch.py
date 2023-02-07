@@ -5,6 +5,7 @@ import json
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 from discord import utils, app_commands
+from asyncio import sleep
 
 load_dotenv()
 client_id = os.getenv('TWITCH_CLIENT_ID')
@@ -12,28 +13,32 @@ secret = os.getenv('TWITCH_SECRET')
 
 
 def check_live(channel_name: str):
-    # get OAUTH2
-    data = {'code': 'channel:view:*',
-            'grant_type': 'client_credentials',
-            'redirect_uri': 'http://localhost',
-            'client_id': client_id,
-            'client_secret': secret}
-    endpoint = 'https://id.twitch.tv/oauth2/token'
+    try:
+        # get OAUTH2
+        data = {'code': 'channel:view:*',
+                'grant_type': 'client_credentials',
+                'redirect_uri': 'http://localhost',
+                'client_id': client_id,
+                'client_secret': secret}
+        endpoint = 'https://id.twitch.tv/oauth2/token'
 
-    request = requests.post(endpoint, data=data)
-    authcode = request.json()['access_token']
+        request = requests.post(endpoint, data=data)
+        authcode = request.json()['access_token']
 
-    params = {"user_login": channel_name.lower()}
-    endpoint = f'https://api.twitch.tv/helix/streams'
-    channel = requests.get(endpoint, headers={'Authorization': 'Bearer ' + authcode, 'Client-Id': client_id}, params=params)
-    data = channel.json()
+        params = {"user_login": channel_name.lower()}
+        endpoint = f'https://api.twitch.tv/helix/streams'
+        channel = requests.get(endpoint, headers={'Authorization': 'Bearer ' + authcode, 'Client-Id': client_id}, params=params)
+        data = channel.json()
 
-    if not data["data"]:
-        return False
+        if not data["data"]:
+            return False
 
-    elif data['data'][0]['type'] == 'live':
-        userdata = data['data'][0]
-        return userdata
+        elif data['data'][0]['type'] == 'live':
+            userdata = data['data'][0]
+            return userdata
+    except Exception:
+        sleep(1)
+        check_live(channel_name)
 
 
 async def create_embed(result: dict):
@@ -108,6 +113,7 @@ class TwitchStuff(commands.Cog):
         print('waiting...')
         await self.bot.wait_until_ready()
 
+    @commands.has_permissions(administrator=True)
     @app_commands.command(description="custom twitch notifications")
     @app_commands.describe(streamer_names="all the streamers you want notifications for seperated by commas",
                            notif_channel="the text channel the notificatoin will be sent to",
@@ -118,7 +124,7 @@ class TwitchStuff(commands.Cog):
             await ctx.response.defer(ephemeral=True)
             with open('streamers.json', 'r') as file:
                 json_file = json.load(file)
-                json_file[str(ctx.guild.id)] = {"streamers": [name.lower() for name in streamer_names.replace(" ","").split(',')], "notif-channel": int(notif_channel.id), "ping-role": int(ping_role.id) if ping_role else None, "message": message}
+                json_file[str(ctx.guild.id)] = {"streamers": [name.lower() for name in streamer_names.replace(" ", "").split(',')], "notif-channel": int(notif_channel.id), "ping-role": int(ping_role.id) if ping_role else None, "message": message}
                 file.close()
             with open('streamers.json', 'w') as write_file:
                 json_file = json.dumps(json_file, indent=4)  # makes the json pretty (gives proper formatting)
@@ -128,6 +134,7 @@ class TwitchStuff(commands.Cog):
         except BaseException as err:
             print(err)
 
+    @commands.has_permissions(administrator=True)
     @app_commands.command(description='clears the live notifications for current server')
     async def clear_live_notifications(self, ctx: discord.Interaction):
         await ctx.response.defer(ephemeral=True)
