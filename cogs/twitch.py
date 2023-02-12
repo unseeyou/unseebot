@@ -12,18 +12,30 @@ client_id = os.getenv('TWITCH_CLIENT_ID')
 secret = os.getenv('TWITCH_SECRET')
 
 
+def get_auth_token():
+    data = {'code': 'channel:view:*',
+            'grant_type': 'client_credentials',
+            'redirect_uri': 'http://localhost',
+            'client_id': client_id,
+            'client_secret': secret}
+    endpoint = 'https://id.twitch.tv/oauth2/token'
+
+    request = requests.post(endpoint, data=data)
+    authcode = request.json()['access_token']
+
+    with open('twitch_0Auth2_code.txt', 'w') as file:
+        file.write(authcode)
+        file.close()
+
+    return True
+
+
 def check_live(channel_name: str):
     try:
         # get OAUTH2
-        data = {'code': 'channel:view:*',
-                'grant_type': 'client_credentials',
-                'redirect_uri': 'http://localhost',
-                'client_id': client_id,
-                'client_secret': secret}
-        endpoint = 'https://id.twitch.tv/oauth2/token'
-
-        request = requests.post(endpoint, data=data)
-        authcode = request.json()['access_token']
+        with open('twitch_0Auth2_code.txt', 'r') as file:
+            authcode = file.read()
+            file.close()
 
         params = {"user_login": channel_name.lower()}
         endpoint = f'https://api.twitch.tv/helix/streams'
@@ -81,6 +93,7 @@ class TwitchStuff(commands.Cog):
     @tasks.loop(seconds=20)
     async def live_notifs_loop(self):
         try:
+            get_auth_token()
             with open('streamers.json', 'r') as file:
                 guild_ids = []
                 channel_ids = []

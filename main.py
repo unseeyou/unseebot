@@ -27,15 +27,19 @@ async def activity_warn(ctx):
 @bot.event
 async def on_ready():
     bot.togetherControl = DiscordTogether(TOKEN)
+    await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
+    print("If you are seeing this then unseeyou's epic bot is working!")
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    print('------')
+
+
+@bot.event
+async def setup_hook():
     print('loading slash commands...')
     try:
         await bot.tree.sync(guild=None)
     except Exception as e:
         print(e)
-    await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
-    print("If you are seeing this then unseeyou's epic bot is working!")
-    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
-    print('------')
 
 
 @bot.event
@@ -282,7 +286,6 @@ async def main():
         await bot.load_extension("cogs.tts")
         await bot.load_extension("cogs.xkcd")
         await bot.load_extension("cogs.poll")
-        await bot.load_extension("cogs.music")
         await bot.load_extension("cogs.twitch")
 
         await bot.load_extension("utils.log")

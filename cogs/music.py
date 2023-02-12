@@ -2,6 +2,9 @@ import asyncio
 import time
 import discord
 import youtube_dl
+import os
+from time import strftime, gmtime, sleep
+from moviepy.audio.io.AudioFileClip import AudioFileClip
 from discord.ext import commands
 from pytube import YouTube
 
@@ -32,10 +35,8 @@ ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=15):
         super().__init__(source, volume)
-
         self.data = data
-        self.title = data.get('title')
-        self.url = data.get('url')
+        self.volume = volume
 
     @classmethod
     async def from_url(cls, url, *, loop=None, stream=False):
@@ -63,7 +64,7 @@ class Music(commands.Cog):
             length = video_object.length
 
             embed = discord.Embed(title=f"Now Playing: `{title}`", url=video_object.watch_url,
-                                  description=f"duration: {round(length / 60, 2)} min")
+                                  description=f"duration: {strftime('%H:%M:%S', gmtime(length))}")
             embed.set_thumbnail(url=video_object.thumbnail_url)
             embed.set_author(name=author, url=video_object.channel_url)
 
@@ -93,19 +94,83 @@ class Music(commands.Cog):
 
     @commands.hybrid_command(help='loads the video first then plays it - less lag than play')
     async def loadplay(self, ctx, *, url: str):
-        """Plays from an url (almost anything youtube_dl supports)"""
-        msg = await ctx.send('loading audio from url...')
-
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop)
-            ctx.voice_client.play(player, after=lambda e: print(f'Player error: {e}') if e else None)
-
+        await ctx.typing(ephemeral=True)
+        msg = await ctx.send('**LOG:**')
+        video_object = YouTube(url)
+        log = """```
+        created video object```"""
+        print(log)
+        log_msg = await ctx.send(log)
+        downloaded_file = video_object.streams.get_audio_only().download()
+        log = """```
+        created video object
+        downloaded mp4 file```"""
+        print(log)
+        await log_msg.edit(content=log)
+        clip = AudioFileClip(downloaded_file)
+        log = """```
+        created video object
+        downloaded mp4 file
+        created moviepy clip```"""
+        print(log)
+        await log_msg.edit(content=log)
+        clip.write_audiofile(downloaded_file.replace(".mp4", ".mp3"))
+        log = """```
+        created video object
+        downloaded mp4 file
+        created moviepy clip
+        succesfully encoded mp3 file with audio data```"""
+        print(log)
+        await log_msg.edit(content=log)
+        clip.close()
+        log = """```
+        created video object
+        downloaded mp4 file
+        created moviepy clip
+        succesfully encoded mp3 file with audio data
+        saved audio file```"""
+        print(log)
+        await log_msg.edit(log)
+        os.remove(downloaded_file)
+        log = """```
+        created video object
+        downloaded mp4 file
+        created moviepy clip
+        succesfully encoded mp3 file with audio data
+        saved audio file
+        deleted video file```"""
+        print(log)
+        await log_msg.edit(log)
+        music_file = clip.filename.replace(".mp4", ".mp3")
+        audio_source = discord.PCMVolumeTransformer(
+            discord.FFmpegPCMAudio(source=clip.filename, options="-loglevel panic"), volume=15)
+        log = """```
+        created video object
+        downloaded mp4 file
+        created moviepy clip
+        succesfully encoded mp3 file with audio data
+        saved audio file
+        deleted video file
+        created audio source```"""
+        print(log)
+        await log_msg.edit(log)
         await ctx.send(embed=self.generate_embed(url))
+        await log_msg.delete()
         await msg.delete()
+        ctx.voice_client.play(audio_source, after=lambda e: print(f'Player error: {e}') if e else None)  # TODO: fix this
+        while ctx.voice_client.is_playing():
+            print('i am playing audio')
+        print('played audio')
+        os.remove(music_file)
+        print('removed mp3 file')
 
     @commands.hybrid_command(help='plays the video as it loads - faster than loadplay')
     async def play(self, ctx, *, url: str):
         """Streams from an url (same as yt, but doesn't predownload)"""
+
+        if ctx.voice_client is None:
+            channel = ctx.message.author.voice_channel
+            await channel.connect()
 
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)

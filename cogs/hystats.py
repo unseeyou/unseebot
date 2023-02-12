@@ -163,7 +163,7 @@ def create_embed(data):
     if username == 'Technoblade':
         embed.set_image(url='https://hypixel.net/attachments/image-26-png.3025155/')
     else:
-        embed.set_image(url=f'https://crafthead.net/armor/bust/{username.lower()}')
+        embed.set_thumbnail(url=f'https://crafthead.net/armor/bust/{uuid}')
     return embed
 
 
