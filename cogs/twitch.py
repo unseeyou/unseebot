@@ -86,14 +86,15 @@ class TwitchStuff(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.live_notifs_loop.start()
+        self.update_auth.start()
 
     def cog_unload(self):
         self.live_notifs_loop.cancel()
+        self.update_auth.cancel()
 
-    @tasks.loop(seconds=20)
+    @tasks.loop(seconds=24)
     async def live_notifs_loop(self):
         try:
-            get_auth_token()
             with open('streamers.json', 'r') as file:
                 guild_ids = []
                 channel_ids = []
@@ -120,6 +121,10 @@ class TwitchStuff(commands.Cog):
         except Exception as err:
             print('BIG FAT ERROR:', err)
             pass
+
+    @tasks.loop(seconds=120)
+    async def update_auth(self):
+        get_auth_token()
 
     @live_notifs_loop.before_loop
     async def before_live_notifs(self):
