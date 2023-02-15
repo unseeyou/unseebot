@@ -6,7 +6,6 @@ import io
 import discord
 import aiohttp
 import asyncio
-import time
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord_together import DiscordTogether
@@ -26,11 +25,10 @@ async def activity_warn(ctx):
 
 @bot.event
 async def on_ready():
-    bot.togetherControl = DiscordTogether(TOKEN)
+    bot.togetherControl = await DiscordTogether(TOKEN)
     await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
-    print("If you are seeing this then unseeyou's epic bot is working!")
-    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
-    print('------')
+    print(f'Logged in/Rejoined as {bot.user} (ID: {bot.user.id})')
+    print('------ Error Log ------')
 
 
 @bot.event
@@ -40,6 +38,7 @@ async def setup_hook():
         await bot.tree.sync(guild=None)
     except Exception as e:
         print(e)
+    print("If you are seeing this then unseeyou's epic bot is working!")
 
 
 @bot.event
@@ -192,7 +191,7 @@ async def bwstats(ctx, message=None):
                            description=f'click the link to view the stats of {message}',
                            colour=discord.Colour.dark_gold())
 
-    if message == None:
+    if message is None:
         await ctx.send(embed=embed1)
     else:
         await ctx.send(embed=embed2)
@@ -215,7 +214,7 @@ async def spam(ctx):
 @bot.command()
 async def sudo(ctx, member: discord.Member, *, message=None):
     await ctx.message.delete()
-    if message == None:
+    if message is None:
         await ctx.send(f'SyntaxError: a person and message must be specified')
         return
 
@@ -266,11 +265,10 @@ async def github(ctx):
 
 @bot.hybrid_command(help='probably my ping')
 async def ping(ctx: commands.Context):
-    before = time.monotonic()
+    latency = round(bot.latency, 2)
     message = await ctx.send("Pong!")
-    ping = (time.monotonic() - before) * 1000
-    await message.edit(content=f"Pong! My ping is `{int(ping)}ms`")
-    print(f'Ping: `{int(ping)} ms`')
+    await message.edit(content=f"Pong! My ping is `{latency} ms`")
+    print(f'Ping: `{latency} ms`')
 
 
 async def main():
