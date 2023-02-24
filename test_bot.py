@@ -12,7 +12,9 @@ from discord_together import DiscordTogether
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-bot = commands.Bot(command_prefix='t!', help_command=None, case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix='t!', case_insensitive=True, intents=intents)
+bot.help_command = None
+
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
@@ -27,13 +29,19 @@ splash_text = """
 
 @bot.event
 async def on_ready():
+    # now start the bot
     bot.togetherControl = await DiscordTogether(TOKEN)
     print(splash_text)
-    await bot.tree.sync(guild=None)
     await bot.change_presence(activity=discord.Game('With your mind - t!help'), status=discord.Status.online)
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print("https://discord.com/api/oauth2/authorize?client_id=925533570041278494&permissions=8&scope=applications.commands%20bot")
     print('------')
+
+
+@bot.event
+async def setup_hook():
+    print('loading slash commands...')
+    await bot.tree.sync(guild=None)
 
 
 @bot.event
@@ -264,22 +272,22 @@ async def hi(interaction: discord.Interaction):  # slash command!
     await interaction.response.send_message(f'Hi, {interaction.user.mention}')
 
 
-@bot.hybrid_command()
-async def ping(ctx):
-    before = time.monotonic()
+@bot.hybrid_command(help='probably my ping')
+async def ping(ctx: commands.Context):
+    latency = round(bot.latency*1000, 2)
     message = await ctx.send("Pong!")
-    ping = (time.monotonic() - before) * 1000
-    await message.edit(content=f"Pong! My ping is `{int(ping)}ms`")
-    print(f'Ping: `{int(ping)} ms`')
+    await message.edit(content=f"Pong! My ping is `{latency} ms`")
+    print(f'Ping: `{latency} ms`')
 
 
 async def main():
     async with bot:
         # first load the general cogs
+        print('loading cogs...')
         await bot.load_extension("cogs.meme")
         await bot.load_extension("cogs.tictactoe")
         await bot.load_extension("cogs.hystats")
-        await bot.load_extension("cogs.help")
+        # await bot.load_extension("cogs.help")
         await bot.load_extension("cogs.epic")
         await bot.load_extension("cogs.pplength")
         await bot.load_extension("cogs.urban")
@@ -293,7 +301,7 @@ async def main():
         # now load the utils
         await bot.load_extension("utils.log")
         await bot.load_extension("utils.controls")
-        # now start the bot
+        print('now actually starting the bot...')
         await bot.start(TOKEN)
 
 

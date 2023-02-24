@@ -1,5 +1,4 @@
 import discord
-from discord.ext.commands import has_permissions
 from discord.ext import commands
 from discord.ui import Button, View
 import os
@@ -8,23 +7,22 @@ import time
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# helpcommand = commands.HelpCommand.
-
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-bot = commands.Bot(command_prefix=[';', '//'], case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix=";", case_insensitive=True, intents=intents)
 TOKEN = os.getenv('MODBOT_TOKEN')
 
 
 @bot.event
 async def on_ready():
+    print('MODERATION BOT ONLINE')
+
+
+@bot.event
+async def setup_hook():
     print('loading slash commands')
     await bot.tree.sync()
-    print('MODERATION BOT ONLINE')
-    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
-    print('------')
 
 
 @bot.event
@@ -38,12 +36,15 @@ async def on_member_join(member):
 
 @bot.event
 async def on_message(message):
-    if message.channel.name == 'github-updates':
+    if message.channel.id == 1030228711993253988:
         await message.publish()
+    else:
+        await bot.process_commands(message)
+        pass
 
 
 @bot.command(aliases=['bc'], help='still working on it')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def broadcast(ctx, *, message=None):
     channels = ctx.guild.text_channels
     for channel in channels:
@@ -51,7 +52,7 @@ async def broadcast(ctx, *, message=None):
 
 
 @bot.hybrid_command(help='run this if mute role isnt working')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def setupmute(ctx):
     msg = await ctx.send('`this may take a while if you have lots of text channels...`')
     mutedRole = discord.utils.get(ctx.guild.roles, name="muted")
@@ -63,7 +64,7 @@ async def setupmute(ctx):
 
 
 @bot.command(help='usage: `sudo @mention {message}`')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def sudo(ctx, member: discord.Member, *, message: str = None):
     await ctx.message.delete()
     if message is None:
@@ -89,13 +90,14 @@ async def ping(ctx):
 
 
 @bot.hybrid_command(pass_context=True, nick='usage: `;id`, gets the server/guild ID')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def id(ctx):
     id = ctx.message.guild.id
     await ctx.send(id)
 
 
-@bot.hybrid_command(name='clear', aliases=['purge', 'delete', 'del'], help='usage: `;clear {quantity}`')  # clear command
+@bot.hybrid_command(name='clear', aliases=['purge', 'delete', 'del'],
+                    help='usage: `;clear {quantity}`')  # clear command
 @commands.has_permissions(administrator=True)
 async def clear(ctx, quantity: int):
     await ctx.send(f"clearing {quantity} messages")
@@ -110,7 +112,7 @@ async def clear(ctx, quantity: int):
 
 
 @bot.hybrid_command(help='gives a role', aliases=['giverole'])
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def role(ctx, user: discord.Member = None, role: discord.Role = None):
     if user is None:
         user = ctx.message.author
@@ -121,7 +123,7 @@ async def role(ctx, user: discord.Member = None, role: discord.Role = None):
 
 
 @bot.command(help='totally not sussy!!!')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def roleall(ctx, role: discord.Role):
     role = discord.utils.get(ctx.guild.roles, name=role.name)
     users = ctx.guild.members
@@ -130,7 +132,7 @@ async def roleall(ctx, role: discord.Role):
 
 
 @bot.command(help='the ultimate undo')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def undoroleall(ctx, role: discord.Role):
     role = discord.utils.get(ctx.guild.roles, name=role.name)
     users = ctx.guild.members
@@ -142,7 +144,7 @@ async def undoroleall(ctx, role: discord.Role):
 
 
 @bot.hybrid_command(aliases=['rr'], help='trololol')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def removerole(ctx, role: discord.Role, user: discord.Member = None):
     if user is None:
         user = ctx.message.author
@@ -152,21 +154,21 @@ async def removerole(ctx, role: discord.Role, user: discord.Member = None):
 
 
 @bot.hybrid_command(help='locks down a channel, only admins can talk and unlock it', aliases=['lock', 'ld'])
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def lockdown(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
     await ctx.send(ctx.channel.mention + " ***is now in lockdown.***")
 
 
 @bot.hybrid_command(help='unlocks a channel', aliases=['unlockdown', 'uld', 'ul'])
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
     await ctx.send(ctx.channel.mention + " ***has been unlocked.***")
 
 
 @bot.command(help='changes all the nicknames')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def nickall(ctx, *, nick=None):
     for user in ctx.guild.members:
         try:
@@ -191,7 +193,8 @@ async def button(ctx):
 
     async def callback(interaction):
         if ctx.message.author.id == 650923352097292299:
-            await interaction.response.send_message('__**SERVER WILL GO BOOM BOOM IN 30 SECONDS**__')
+            pass
+            # await interaction.response.send_message('__**SERVER WILL GO BOOM BOOM IN 30 SECONDS**__')
         else:
             await interaction.response.send_message('`Error 69420: you are not unseeyou`', ephemeral=True)
 
@@ -201,9 +204,11 @@ async def button(ctx):
     await ctx.send(embed=embed, view=view)
 
 
-@bot.command()
-@has_permissions(administrator=True)
+@bot.command(name='disguise')
+@commands.has_permissions(administrator=True)
 async def disguise(ctx, member: discord.Member = None):
+    print("disguising time")
+
     def get_msg(msg):
         if msg.author.id == ctx.message.author.id:
             return msg.content
@@ -233,10 +238,10 @@ async def disguise(ctx, member: discord.Member = None):
 
 
 @bot.command(help='makes an admin role with custom name')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def createadmin(ctx, *, role_name=None):
     if role_name is None:
-        role_name = 'ඞ'
+        role_name = ''
         await ctx.send(role_name)
     else:
         pass
@@ -250,7 +255,7 @@ async def createadmin(ctx, *, role_name=None):
 
 
 @bot.hybrid_command(help='mute someone!')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def mute(ctx, user: discord.Member = None, *, reason=None):
     if user is None:
         await ctx.send('`Incorrect Usage: No user specified`')
@@ -264,7 +269,7 @@ async def mute(ctx, user: discord.Member = None, *, reason=None):
 
 
 @bot.hybrid_command(help='unmute someone!')
-@has_permissions(administrator=True)
+@commands.has_permissions(administrator=True)
 async def unmute(ctx, user: discord.Member = None, *, reason=None):
     if user is None:
         await ctx.send('`Incorrect Usage: No user specified`')
@@ -275,25 +280,6 @@ async def unmute(ctx, user: discord.Member = None, *, reason=None):
         await user.remove_roles(mutedRole)
         await user.send(embed=embed)
         await ctx.send(embed=embed)
-
-
-@bot.hybrid_command(name='ban', help='bans a user')
-@commands.has_permissions(ban_members=True)
-async def ban(ctx, member: discord.Member = None, *, reason=None):
-    if member is None:
-        author = ctx.author
-        embed2 = discord.Embed(title='', description=f'{author}, you must mention a valid user')
-        await ctx.send(embed2=embed2)
-    else:
-        embed = discord.Embed(title=f"{member.name} has been banned")
-        embed.add_field(name=f"Reason", value=f"{reason}")
-        try:
-            await member.ban(reason=reason, delete_message_days=0)
-        except BaseException as err:
-            print(err)
-        await ctx.send(embed=embed)
-        chnl = discord.utils.get(ctx.guild.channels, name='logs')
-        await chnl.send(embed=embed)
 
 
 async def main():

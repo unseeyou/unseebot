@@ -25,7 +25,6 @@ async def activity_warn(ctx):
 
 @bot.event
 async def on_ready():
-    bot.togetherControl = await DiscordTogether(TOKEN)
     await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
     print(f'Logged in/Rejoined as {bot.user} (ID: {bot.user.id})')
     print('------ Error Log ------')
@@ -33,6 +32,7 @@ async def on_ready():
 
 @bot.event
 async def setup_hook():
+    bot.togetherControl = await DiscordTogether(TOKEN)
     print('loading slash commands...')
     try:
         await bot.tree.sync(guild=None)
@@ -265,7 +265,7 @@ async def github(ctx):
 
 @bot.hybrid_command(help='probably my ping')
 async def ping(ctx: commands.Context):
-    latency = round(bot.latency, 2)
+    latency = round(bot.latency*1000, 2)
     message = await ctx.send("Pong!")
     await message.edit(content=f"Pong! My ping is `{latency} ms`")
     print(f'Ping: `{latency} ms`')
@@ -285,7 +285,7 @@ async def main():
         await bot.load_extension("cogs.xkcd")
         await bot.load_extension("cogs.poll")
         await bot.load_extension("cogs.twitch")
-
+        # load utils - same as cog but different directory
         await bot.load_extension("utils.log")
         await bot.start(TOKEN)
 
