@@ -19,3 +19,6 @@
         "message": "[PING] [USER] is live! Come say hi at https://twitch.tv/[USER]"
     }
 }
+
+you probably dont need to worry about this just create an empty uson file as the bot will automatically generate this stuff anyway
+
