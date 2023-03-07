@@ -68,11 +68,20 @@ async def create_embed(result: dict):
 
 async def send_message(embed, guild_id, channel, jsonfile, result):
     notif_msg = jsonfile[str(guild_id)]["message"].replace("[USER]", result["user_name"]).replace("[PING]", f"{'<@&'+str(jsonfile[str(guild_id)]['ping-role'])+'>' if jsonfile[str(guild_id)]['ping-role'] is not None else '@everyone'}")
-    notif_msg = notif_msg + f' [stream started at {result["started_at"].replace("-", "/").replace("T", ", ").replace("Z", "") + " UTC +0"}]'
+    uid = result["started_at"].replace("-", "/").replace("T", ", ").replace("Z", "")  # unique identifier
     try:
-        messages = [msg.content async for msg in channel.history(limit=50)]
+        embeds = [msg.embeds async for msg in channel.history(limit=50)]
+        messages = []
+
+        for i in embeds:
+            try:
+                messages.append(str(i[0].footer))
+            except IndexError:
+                pass
+
+        print(messages)
         if messages:
-            if notif_msg in messages:
+            if f"EmbedProxy(text='made by unseeyou | stream started at {uid} UTC +0')" in messages:
                 pass
             else:
                 await channel.send(notif_msg, embed=embed)
