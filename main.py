@@ -256,7 +256,7 @@ async def invite(ctx):
 @bot.hybrid_command(help='my github!')
 async def github(ctx):
     git = discord.Embed(title='link', url='https://github.com/unseeyou/unseebot',
-                        description="click on the link to open unseebot'b github page",
+                        description="click on the link to open unseebot's github page",
                         colour=discord.Colour.dark_gray())
     git.set_image(
         url='https://images-ext-2.discordapp.net/external/pe2rnxtS-petcef7jYVHtm1ncabRKulTvDV70G1F5O8/https/repository-images.githubusercontent.com/435063686/e6f3942e-98dd-407b-9fbc-4ba1dbe89849')
