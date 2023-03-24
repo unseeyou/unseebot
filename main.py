@@ -285,6 +285,7 @@ async def main():
         await bot.load_extension("cogs.xkcd")
         await bot.load_extension("cogs.poll")
         await bot.load_extension("cogs.twitch")
+        await bot.load_extension("cogs.numbergame")
         # load utils - same as cog but different directory
         await bot.load_extension("utils.log")
         await bot.start(TOKEN)
