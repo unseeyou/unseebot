@@ -55,8 +55,9 @@ class XKCD(commands.Cog):
                 await interaction.response.edit_message(embed=em, view=view2)
 
             async def endc(interaction):
-                view3 = View()
-                await interaction.response.edit_message(view=view3)
+                for child in view.children:
+                    child.disabled = True
+                await interaction.response.edit_message(view=view)
 
             nextb.callback = nextc
             end.callback = endc

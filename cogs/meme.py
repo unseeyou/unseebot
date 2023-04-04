@@ -30,6 +30,7 @@ def get_post(subreddit: str):
 class Meme(commands.Cog):
     @commands.hybrid_command(aliases=['m'], help='yoink memes from reddit')
     async def meme(self, ctx):
+        await ctx.typing()
         json = get_post('memes+dankmemes+meme')
         embed = discord.Embed(title=json['title'], colour=discord.Colour.brand_red(), url=json['postLink'])
         embed.set_image(url=json['url'])
@@ -58,8 +59,9 @@ class Meme(commands.Cog):
         end_button = Button(label='End Interaction', style=discord.ButtonStyle.danger)
 
         async def end_callback(interaction):
-            view2 = View()
-            await interaction.response.edit_message(view=view2)
+            for child in view.children:
+                child.disabled = True
+            await interaction.response.edit_message(view=view)
 
         end_button.callback = end_callback
         view.add_item(end_button)
@@ -67,6 +69,7 @@ class Meme(commands.Cog):
 
     @commands.hybrid_command(aliases=['r', 'redditsearch'], help='yoink images and gifs from any subreddit')
     async def reddit(self, ctx, subreddit: str):
+        await ctx.typing()
         try:
                 request = get_post(subreddit.lower())
                 embed = discord.Embed(title=request["title"], colour=discord.Colour.brand_red(), url=request['postLink'])
@@ -99,8 +102,9 @@ class Meme(commands.Cog):
                 end_button = Button(label='End Interaction', style=discord.ButtonStyle.danger)
 
                 async def end_callback(interaction):
-                    view2 = View()
-                    await interaction.response.edit_message(view=view2)
+                    for child in view.children:
+                        child.disabled = True
+                    await interaction.response.edit_message(view=view)
 
                 end_button.callback = end_callback
                 view.add_item(end_button)
