@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ui import Button, View
+from discord import app_commands
 import os
 import asyncio
 import time
@@ -17,6 +18,7 @@ TOKEN = os.getenv('MODBOT_TOKEN')
 @bot.event
 async def on_ready():
     print('MODERATION BOT ONLINE')
+    print(f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=applications.commands%20bot")
 
 
 @bot.event
@@ -190,6 +192,7 @@ async def on_command_error(ctx, error):
 async def button(ctx):
     view = View()
     embed = discord.Embed(title='USE WITH CAUTION', colour=discord.Colour.red())
+    embed.set_author(icon_url=ctx.author.avatar.url, name=f"sent by {ctx.author.name}")
 
     async def callback(interaction):
         if ctx.message.author.id == 650923352097292299:
@@ -280,6 +283,19 @@ async def unmute(ctx, user: discord.Member = None, *, reason=None):
         await user.remove_roles(mutedRole)
         await user.send(embed=embed)
         await ctx.send(embed=embed)
+
+
+@bot.tree.command(name='avatar', description="gets a requested user's avatar")
+@app_commands.describe(user='the user you are trying to get')
+async def _avatar(interaction: discord.Interaction, user: discord.User):
+    await interaction.response.defer(thinking=True)
+
+    embed = discord.Embed(title=f"{user.name}'s Avatar", url=user.avatar.url)
+    embed.set_author(name=f"{user.name}#{user.discriminator}", icon_url=user.avatar.url, url=user.avatar.url)
+    embed.set_image(url=user.avatar.url)
+    embed.set_footer(text=f"Requested by {interaction.user.name}#{interaction.user.discriminator}", icon_url=interaction.user.avatar.url)
+
+    await interaction.followup.send(embed=embed)
 
 
 async def main():

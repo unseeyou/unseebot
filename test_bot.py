@@ -8,11 +8,13 @@ import time
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord_together import DiscordTogether
+from discord import app_commands
+from typing import Literal
 
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-bot = commands.Bot(command_prefix='t!', case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix='t!', case_insensitive=True, intents=intents, help_command=None)
 bot.help_command = None
 
 load_dotenv()
@@ -34,7 +36,7 @@ async def on_ready():
     print(splash_text)
     await bot.change_presence(activity=discord.Game('With your mind - t!help'), status=discord.Status.online)
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
-    print("https://discord.com/api/oauth2/authorize?client_id=925533570041278494&permissions=8&scope=applications.commands%20bot")
+    print(f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=applications.commands%20bot")
     print('------')
 
 
@@ -280,6 +282,13 @@ async def ping(ctx: commands.Context):
     print(f'Ping: `{latency} ms`')
 
 
+@bot.tree.command()
+@app_commands.describe(action='The action to do in the shop', item='The target item')
+async def shop(interaction: discord.Interaction, action: Literal['Buy', 'Sell'], item: str):
+    """Interact with the shop"""
+    await interaction.response.send_message(f'Action: {action}\nItem: {item}')
+
+
 async def main():
     async with bot:
         # first load the general cogs
@@ -287,7 +296,7 @@ async def main():
         await bot.load_extension("cogs.meme")
         await bot.load_extension("cogs.tictactoe")
         await bot.load_extension("cogs.hystats")
-        # await bot.load_extension("cogs.help")
+        await bot.load_extension("cogs.help")
         await bot.load_extension("cogs.epic")
         await bot.load_extension("cogs.pplength")
         await bot.load_extension("cogs.urban")
@@ -297,10 +306,15 @@ async def main():
         await bot.load_extension("cogs.poll")
         await bot.load_extension("cogs.music")
         await bot.load_extension("cogs.twitch")
+        await bot.load_extension("cogs.numbergame")
 
         # now load the utils
         await bot.load_extension("utils.log")
         await bot.load_extension("utils.controls")
+
+        # load snekbox
+        # await bot.load_extension("cogs.snekbox._init.py")
+
         print('now actually starting the bot...')
         await bot.start(TOKEN)
 
