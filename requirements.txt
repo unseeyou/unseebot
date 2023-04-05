@@ -8,3 +8,4 @@ moviepy==1.0.3
 praw
 pytube
 youtube-dl
+gTTS
