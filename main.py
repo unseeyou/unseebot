@@ -274,7 +274,7 @@ async def ping(ctx: commands.Context):
 
 async def main():
     async with bot:
-        cogs = ['epic', 'fakehack', 'help', 'hystats', 'meme', 'numbergame', 'poll', 'pplength', 'run_code',
+        cogs = ['epic', 'fakehack', 'help', 'hystats', 'meme', 'numbergame', 'poll', 'pplength',
                 'tictactoe', 'tts', 'twitch', 'urban', 'xkcd', 'music']
         for cog in cogs:
             print(f"loading {cog}")
