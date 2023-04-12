@@ -293,20 +293,12 @@ async def main():
     async with bot:
         # first load the general cogs
         print('loading cogs...')
-        await bot.load_extension("cogs.meme")
-        await bot.load_extension("cogs.tictactoe")
-        await bot.load_extension("cogs.hystats")
-        await bot.load_extension("cogs.help")
-        await bot.load_extension("cogs.epic")
-        await bot.load_extension("cogs.pplength")
-        await bot.load_extension("cogs.urban")
-        await bot.load_extension("cogs.fakehack")
-        await bot.load_extension("cogs.tts")
-        await bot.load_extension("cogs.xkcd")
-        await bot.load_extension("cogs.poll")
-        await bot.load_extension("cogs.music")
-        await bot.load_extension("cogs.twitch")
-        await bot.load_extension("cogs.numbergame")
+        cogs = ['epic', 'fakehack', 'help', 'hystats', 'meme', 'numbergame', 'poll', 'pplength', 'run_code',
+                'tictactoe', 'tts', 'twitch', 'urban', 'xkcd', 'music']
+        for cog in cogs:
+            print(f"loading {cog}")
+            await bot.load_extension(f"cogs.{cog}")
+            print(f'loaded {cog}')
 
         # now load the utils
         await bot.load_extension("utils.log")

@@ -27,6 +27,7 @@ async def activity_warn(ctx):
 async def on_ready():
     await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
     print(f'Logged in/Rejoined as {bot.user} (ID: {bot.user.id})')
+    print(f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=applications.commands%20bot")
     print('------ Error Log ------')
 
 
@@ -273,19 +274,12 @@ async def ping(ctx: commands.Context):
 
 async def main():
     async with bot:
-        await bot.load_extension("cogs.meme")
-        await bot.load_extension("cogs.tictactoe")
-        await bot.load_extension("cogs.hystats")
-        await bot.load_extension("cogs.help")
-        await bot.load_extension("cogs.epic")
-        await bot.load_extension("cogs.pplength")
-        await bot.load_extension("cogs.urban")
-        await bot.load_extension("cogs.fakehack")
-        await bot.load_extension("cogs.tts")
-        await bot.load_extension("cogs.xkcd")
-        await bot.load_extension("cogs.poll")
-        await bot.load_extension("cogs.twitch")
-        await bot.load_extension("cogs.numbergame")
+        cogs = ['epic', 'fakehack', 'help', 'hystats', 'meme', 'numbergame', 'poll', 'pplength', 'run_code',
+                'tictactoe', 'tts', 'twitch', 'urban', 'xkcd', 'music']
+        for cog in cogs:
+            print(f"loading {cog}")
+            await bot.load_extension(f"cogs.{cog}")
+            print(f'loaded {cog}')
         # load utils - same as cog but different directory
         await bot.load_extension("utils.log")
         await bot.start(TOKEN)
