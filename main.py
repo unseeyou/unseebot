@@ -13,7 +13,7 @@ from discord_together import DiscordTogether
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-bot = commands.Bot(command_prefix='>', help_command=None, case_insensitive=True, intents=intents)
+bot = commands.Bot(command_prefix='>', help_command=None, case_insensitive=True, intents=intents, activity=discord.Game('With your mind - >help'), status=discord.Status.online)
 
 load_dotenv()
 TOKEN = os.getenv("UNSEEBOT_TOKEN")
@@ -25,7 +25,6 @@ async def activity_warn(ctx):
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=discord.Game('With your mind - >help'), status=discord.Status.online)
     print(f'Logged in/Rejoined as {bot.user} (ID: {bot.user.id})')
     print(f"https://discord.com/api/oauth2/authorize?client_id={bot.user.id}&permissions=8&scope=applications.commands%20bot")
     print('------ Error Log ------')
@@ -275,7 +274,7 @@ async def ping(ctx: commands.Context):
 async def main():
     async with bot:
         cogs = ['epic', 'fakehack', 'help', 'hystats', 'meme', 'numbergame', 'poll', 'pplength',
-                'tictactoe', 'tts', 'twitch', 'urban', 'xkcd', 'music']
+                'tictactoe', 'tts', 'twitch', 'urban', 'xkcd', 'music', 'pfp-gg']
         for cog in cogs:
             print(f"loading {cog}")
             await bot.load_extension(f"cogs.{cog}")
