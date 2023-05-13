@@ -1,15 +1,15 @@
 import discord
 import requests
-from bs4 import BeautifulSoup as bs4
+from bs4 import BeautifulSoup as bs4  # not remotely beautiful
 from discord.ext import commands
 from discord import app_commands
 
-ROOT = "https://pfps.gg/pfps/"
+ROOT = "https://pfps.gg/pfps/"  # look at me using fancy globals
 
 
 def get_page(url):
     r = requests.get(url)
-    return r.content
+    return r.content  # returns all the HTML
 
 
 def scrape_page(url):
@@ -46,6 +46,16 @@ def generate_embed(url, index, name, icon_url, non_dl_url):
     return embed
 
 
+# instead of scraping the page more just make a request to the server asking for the png and if that returns 404
+# just assume it is a gif. This stops me having to loop twice foe each embed and fixes the gifs being squashed
+def determine_filetype(url):
+    request = requests.get(url=url)
+    status = request.status_code
+    if status != 404:
+        return url
+    return url.replace('png', 'gif')
+
+
 class GetPfpCommand(commands.Cog):
     @app_commands.command(name='pfpsearch', description="scrapes pfp.gg for pfps that match your query")
     @app_commands.describe(query="the search term")
@@ -62,13 +72,8 @@ class GetPfpCommand(commands.Cog):
             if len(urls) > 2:
                 break
         for url in urls:
-            embeds.append(generate_embed(url, urls.index(url),
-                                         f"{interaction.user.name}#{interaction.user.discriminator}",
-                                         interaction.user.avatar.url, pages[urls.index(url)]))
-
-        # loop again for the gifs bc I'm not going to scrape the website to find out what filetype it is
-        for url in urls:
-            embeds.append(generate_embed(url.replace('png','gif'), urls.index(url),
+            file_url = determine_filetype(url)
+            embeds.append(generate_embed(file_url, urls.index(url),
                                          f"{interaction.user.name}#{interaction.user.discriminator}",
                                          interaction.user.avatar.url, pages[urls.index(url)]))
         try:
