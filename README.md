@@ -1,5 +1,5 @@
 # modbot
-this is just an extra bot with moderation tools
+this is just an extra bot with moderation tools which will probably be merged into unseebot in the future
 
 # unseebot
 feel free to reuse this code and/or improve on it!
