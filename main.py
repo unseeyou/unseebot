@@ -8,7 +8,6 @@ import aiohttp
 import asyncio
 from dotenv import load_dotenv
 from discord.ext import commands
-from discord_together import DiscordTogether
 
 intents = discord.Intents.default()
 intents.members = True
@@ -32,7 +31,6 @@ async def on_ready():
 
 @bot.event
 async def setup_hook():
-    bot.togetherControl = await DiscordTogether(TOKEN)
     print('loading slash commands...')
     try:
         await bot.tree.sync(guild=None)
@@ -102,85 +100,15 @@ async def yt(ctx):
         await activity_warn(ctx)
 
 
-@bot.hybrid_command(aliases=['doggo', 'dogs', 'dogfacts', 'dogfact', 'pup', 'pupper', 'puppy'], help='doggy pics!')
-async def dog(ctx):
-    async with aiohttp.ClientSession() as session:
-        request = await session.get('https://some-random-api.ml/img/dog')
-        dogjson = await request.json()
-        request2 = await session.get('https://some-random-api.ml/facts/dog')
-        factjson = await request2.json()
-    dogbed = discord.Embed(title='DOGGY', colour=discord.Colour.dark_gold())
-    dogbed.set_image(url=dogjson['link'])
-    dogbed.set_footer(text=factjson['fact'])
-    await ctx.send(embed=dogbed)
-
-
 @bot.command()
 async def anal(ctx):
     await ctx.send('https://tenor.com/view/sheep-anal-sheep-bum-bum-stab-from-behind-gif-19411863')
-
-
-@bot.hybrid_command(aliases=['kitty', 'kitten', 'meow', 'catfact', 'catfacts'], help='kitty pics!')
-async def cat(ctx):
-    async with aiohttp.ClientSession() as session:
-        request1 = await session.get('https://some-random-api.ml/img/cat')
-        catjson = await request1.json()
-        request22 = await session.get('https://some-random-api.ml/facts/cat')
-        factjson1 = await request22.json()
-    catty = discord.Embed(title='KITTY', colour=discord.Colour.dark_gold())
-    catty.set_image(url=catjson['link'])
-    catty.set_footer(text=factjson1['fact'])
-    await ctx.send(embed=catty)
 
 
 @bot.command(pass_context=True)
 async def id(ctx):
     id = ctx.message.guild.id
     await ctx.send(id)
-
-
-@bot.hybrid_command(help='launches the poker activity')
-async def poker(ctx):
-    try:
-        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'poker')
-        await ctx.send(f'click on this link to start the game!\n{invite}')
-    except Exception as err:
-        print(err)
-        await ctx.send(err)
-        await activity_warn(ctx)
-
-
-@bot.hybrid_command(aliases=['draw', 'skribbl', 'scribble', 'skribbl.io'], help='skribbl.io but in a discord vc')
-async def doodle(ctx):
-    try:
-        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'sketch-heads')
-        await ctx.send(f'click on this link to start the game!\n{invite}')
-    except Exception as err:
-        print(err)
-        await ctx.send(err)
-        await activity_warn(ctx)
-
-
-@bot.hybrid_command(help='discord vc game which involves words I guess')
-async def word(ctx):
-    try:
-        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'awkword')
-        await ctx.send(f'click on this link to start the game!\n{invite}')
-    except Exception as err:
-        print(err)
-        await ctx.send(err)
-        await activity_warn(ctx)
-
-
-@bot.hybrid_command(help='golf but in a discord voice chat')
-async def golf(ctx):
-    try:
-        invite = await bot.togetherControl.create_link(ctx.author.voice.channel.id, 'putt-party')
-        await ctx.send(f'click on this link to start the game!\n{invite}')
-    except Exception as err:
-        print(err)
-        await ctx.send(err)
-        await activity_warn(ctx)
 
 
 @bot.command()
@@ -195,20 +123,6 @@ async def bwstats(ctx, message=None):
         await ctx.send(embed=embed1)
     else:
         await ctx.send(embed=embed2)
-
-
-@bot.command()
-async def hello(ctx):
-    await ctx.send('Hello!')
-
-
-@bot.command()
-async def spam(ctx):
-    await ctx.send('no')
-    await ctx.message.author.send("naughty naughty you shouldn't spam people or the server.")
-    await ctx.message.author.send('this is what you get')
-    for i in range(12):
-        await ctx.message.author.send('spam')
 
 
 @bot.command()
