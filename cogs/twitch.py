@@ -1,4 +1,7 @@
+import datetime
 import os
+from json import JSONDecodeError
+
 import requests
 import discord
 import json
@@ -30,7 +33,7 @@ def get_auth_token():
     return True
 
 
-def check_live(channel_name: str):
+async def check_live(channel_name: str):
     try:
         # get OAUTH2
         with open('twitch_0Auth2_code.txt', 'r') as file:
@@ -43,32 +46,41 @@ def check_live(channel_name: str):
         data = channel.json()
 
         if not data["data"]:
-            return False
+            False
 
         elif data['data'][0]['type'] == 'live':
             userdata = data['data'][0]
             return userdata
     except Exception:
-        sleep(1)
-        check_live(channel_name)
+        await sleep(1)
+        await check_live(channel_name)
 
 
 async def create_embed(result: dict):
     embed = discord.Embed(title=result["title"], url=f'https://twitch.tv/{result["user_login"]}',
                           colour=discord.Colour.dark_purple())
     embed.set_image(url=result["thumbnail_url"].replace("-{width}x{height}", ""))
-    embed.set_author(name=result["user_name"])
+    embed.set_author(name=result["user_name"])  # url=result["profile_url"]
     embed.set_footer(
         text=f'made by unseeyou | stream started at {result["started_at"].replace("-", "/").replace("T", ", ").replace("Z", "") + " UTC +0"}')
     embed.set_thumbnail(url=f"https://static-cdn.jtvnw.net/ttv-boxart/{result['game_id']}.jpg")
     embed.add_field(name=f'Playing', value=result["game_name"])
+    # date stuff
+    stream_time = result["started_at"]
+    year = int(stream_time[:4])
+    month = int(stream_time[5:7])
+    day = int(stream_time[8:10])
+    hour = int(stream_time[11:13])
+    second = int(stream_time[14:16])
+    date = int(datetime.datetime(year=year, month=month, day=day, hour=hour, second=second).timestamp())
 
+    embed.add_field(name='Stream Started', value=f'<t:{date}:R>')
     return embed
 
 
-async def send_message(embed, guild_id, channel, jsonfile, result):
-    notif_msg = jsonfile[str(guild_id)]["message"].replace("[USER]", result["user_name"]).replace("[PING]", f"{'<@&'+str(jsonfile[str(guild_id)]['ping-role'])+'>' if jsonfile[str(guild_id)]['ping-role'] is not None else '@everyone'}")
+async def send_message(embed, channel, message, result, ping_role, user):
     uid = result["started_at"].replace("-", "/").replace("T", ", ").replace("Z", "")  # unique identifier
+    notif_msg = message.replace('[PING]', f"{ping_role.mention}").replace('[USER]', user)
     try:
         embeds = [msg.embeds async for msg in channel.history(limit=50)]
         messages = []
@@ -79,7 +91,6 @@ async def send_message(embed, guild_id, channel, jsonfile, result):
             except IndexError:
                 pass
 
-        print(messages)
         if messages:
             if f"EmbedProxy(text='made by unseeyou | stream started at {uid} UTC +0')" in messages:
                 pass
@@ -105,27 +116,27 @@ class TwitchStuff(commands.Cog):
     async def live_notifs_loop(self):
         try:
             with open('streamers.json', 'r') as file:
-                guild_ids = []
-                channel_ids = []
                 json_file = json.load(file)
                 # Makes sure the json isn't empty before continuing.
                 if json_file is not None:
-                    for i in json_file:
-                        guild_ids.append(i)
-                        channel_ids.append(json_file[i]["notif-channel"])
+                    pass
                 else:
                     print("File is empty")
                 # iterate over each server
-                for server in json_file:
-                    for i in json_file[server]["streamers"]:
-                        output = check_live(i)
-                        if output:
-                            embed = await create_embed(result=output)
-                            guild = self.bot.get_guild(int(server))
-                            channel = utils.get(guild.text_channels, id=json_file[server]["notif-channel"])
-                            await send_message(embed=embed, result=output, guild_id=server, jsonfile=json_file, channel=channel)
-                        else:
-                            pass
+                for streamer in json_file:
+                    print('checking', streamer)
+                    output = await check_live(streamer)
+                    if output:
+                        embed = await create_embed(result=output)
+                        for guild in json_file[streamer]:
+                            server = self.bot.get_guild(int(guild['serverID']))
+                            channel = utils.get(server.text_channels, id=guild["ChannelID"])
+                            await send_message(embed=embed, channel=channel, ping_role=utils.get(
+                                server.roles, id=guild["pingroleID"]), result=output,
+                                               message=guild["message"], user=output["user_name"])
+
+                    else:
+                        pass
                 file.close()
         except Exception as err:
             print('BIG FAT ERROR:', err)
@@ -149,33 +160,48 @@ class TwitchStuff(commands.Cog):
     async def add_live_alerts(self, ctx: discord.Interaction, streamer_names: str, notif_channel: discord.TextChannel, message: str, ping_role: discord.Role = None):
         try:
             await ctx.response.defer(ephemeral=True)
+            server_details = {
+                "serverID": ctx.guild_id,
+                "ChannelID": notif_channel.id,
+                "message": message,
+                "pingroleID": ping_role.id if ping_role is not None else None,
+            }  # new structure only searches for each streamer once per cycle instead of multiple times
             with open('streamers.json', 'r') as file:
-                json_file = json.load(file)
-                json_file[str(ctx.guild.id)] = {"streamers": [name.lower() for name in streamer_names.replace(" ", "").split(',')], "notif-channel": int(notif_channel.id), "ping-role": int(ping_role.id) if ping_role else None, "message": message}
-                file.close()
+                try:
+                    json_file = json.load(file)
+                except JSONDecodeError:
+                    json_file = {}
+                for streamer in list(set([l.strip() for l in streamer_names.split(',')])):  # if a user puts a streamer more than once we don't want
+                    try:  # messages getting sent, so this prevents it.
+                        json_file[streamer] = json_file[streamer].append(server_details)  # if it already exists just append to the list
+                    except KeyError:
+                        json_file[streamer] = [server_details]  # otherwise just make a new list
             with open('streamers.json', 'w') as write_file:
                 json_file = json.dumps(json_file, indent=4)  # makes the json pretty (gives proper formatting)
-                write_file.write(str(json_file).replace("'", '"'))
+                write_file.write(str(json_file).replace("'", '"'))  # same here
                 write_file.close()
-            await ctx.followup.send('Alert added! Try going live as a test if possible and create an issue on the support server if it does not work.')
+            await ctx.followup.send('Alert/s added successfully!')
         except BaseException as err:
             print(err)
+            await ctx.followup.send(f'Error while creating alerts: {str(err)}')
 
     @app_commands.checks.has_permissions(administrator=True)
     @app_commands.command(description='clears the live notifications for current server')
     async def clear_live_notifications(self, ctx: discord.Interaction):
         await ctx.response.defer(ephemeral=True)
         try:
-            await ctx.response.defer(ephemeral=True)
             with open('streamers.json', 'r') as file:
                 json_file = json.load(file)
-                del json_file[str(ctx.guild.id)]
+                for streamer in json_file:
+                    for server in json_file[streamer]:
+                        if server["serverID"] == ctx.guild_id:
+                            del server
                 file.close()
             with open('streamers.json', 'w') as write_file:
                 json_file = json.dumps(json_file, indent=4)  # makes the json pretty (gives proper formatting)
                 write_file.write(str(json_file).replace("'", '"'))  # python uses "'"s in dicts
                 write_file.close()
-            await ctx.followup.send('Alerts removed! Please create a post in the forum of my help server if it did not work.')
+            await ctx.followup.send('Alerts removed! Please create a post in the forum of my help server if it did not work. (/server for invite)')
         except BaseException as err:
             print(err)
 
