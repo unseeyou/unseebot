@@ -157,14 +157,14 @@ class TwitchStuff(commands.Cog):
                            notif_channel="the text channel the notificatoin will be sent to",
                            message="the message sent, using [USER] as where the name goes & [PING] as where the ping goes",
                            ping_role="the role being pinged in the notification [optional, otherwise @everyone ping]")
-    async def add_live_alerts(self, ctx: discord.Interaction, streamer_names: str, notif_channel: discord.TextChannel, message: str, ping_role: discord.Role = None):
+    async def add_live_alerts(self, ctx: discord.Interaction, streamer_names: str, notif_channel: discord.TextChannel, message: str, ping_role: discord.Role):
         try:
             await ctx.response.defer(ephemeral=True)
             server_details = {
                 "serverID": ctx.guild_id,
                 "ChannelID": notif_channel.id,
                 "message": message,
-                "pingroleID": ping_role.id if ping_role is not None else None,
+                "pingroleID": ping_role.id,
             }  # new structure only searches for each streamer once per cycle instead of multiple times
             with open('streamers.json', 'r') as file:
                 try:
@@ -173,7 +173,11 @@ class TwitchStuff(commands.Cog):
                     json_file = {}
                 for streamer in list(set([l.strip() for l in streamer_names.split(',')])):  # if a user puts a streamer more than once we don't want
                     try:  # messages getting sent, so this prevents it.
-                        json_file[streamer] = json_file[streamer].append(server_details)  # if it already exists just append to the list
+                        for srvr in json_file[streamer]:  # replace the data for that server
+                            if srvr["serverID"] == server_details["serverID"]:
+                                json_file[streamer][json_file[streamer].index(srvr)] = server_details
+                            else:
+                                json_file[streamer] = json_file[streamer].append(server_details)  # if streamer already exists just append to the list
                     except KeyError:
                         json_file[streamer] = [server_details]  # otherwise just make a new list
             with open('streamers.json', 'w') as write_file:
