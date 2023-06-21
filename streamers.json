@@ -1,24 +1,34 @@
 {
-    "SERVER ID": {
-        "streamers": [
-            list of streamer_names
-        ],
-        "notif-channel": text channel ID,
-        "ping-role": role id,
-        "message": message replacing the ping with [PING] and the username with [USER]
-    },
-    "999540525336121344": {   <-- example here
-        "streamers": [
-            "lyr4t",
-            "sadkylo_",
-            "pinkhellfire",
-            "imprisond"
-        ],
-        "notif-channel": 1061774662213845053,
-        "ping-role": 1064437019163500606,
-        "message": "[PING] [USER] is live! Come say hi at https://twitch.tv/[USER]"
-    }
+  "Streamer Name": [{
+      "serverID": 12345,
+      "ChannelID": 67890,
+      "message": "[PING] [NAME] is live!!!!",
+      "pingroleID": 112123123
+    },{
+      "serverID": 12345,
+      "ChannelID": 67890,
+      "message": "[PING] [NAME] is live!!!!",
+      "pingroleID": 112123123
+    },{
+      "serverID": 12345,
+      "ChannelID": 67890,
+      "message": "[PING] [NAME] is live!!!!",
+      "pingroleID": 112123123
+    }],
+  "Another Streamer Name": [{
+      "serverID": 12345,
+      "ChannelID": 67890,
+      "message": "[PING] [NAME] is live!!!!",
+      "pingroleID": 112123123
+    },{
+      "serverID": 12345,
+      "ChannelID": 67890,
+      "message": "[PING] [NAME] is live!!!!",
+      "pingroleID": 112123123
+    },{
+      "serverID": 12345,
+      "ChannelID": 67890,
+      "message": "[PING] [NAME] is live!!!!",
+      "pingroleID": 112123123
+    }]
 }
-
-you probably dont need to worry about this just create an empty JSON file as the bot will automatically generate this stuff anyway
-
